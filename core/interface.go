@@ -131,3 +131,7 @@ type Logger interface {
   Crit(string, ...interface{})
   Error(string, ...interface{})
 }
+
+type PluginLoader interface{
+  Lookup(name string, validate func(interface{}) bool) []interface{}
+}
