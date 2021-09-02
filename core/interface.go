@@ -66,7 +66,6 @@ type TracerResult interface {
 	CaptureState(pc uint64, op OpCode, gas, cost uint64, scope ScopeContext, rData []byte, depth int, err error)
 	CaptureFault(pc uint64, op OpCode, gas, cost uint64, scope ScopeContext, depth int, err error)
 	CaptureEnd(output []byte, gasUsed uint64, t time.Duration, err error)
-	Result() interface{}
 }
 
 type ScopeContext interface {
@@ -75,8 +74,10 @@ type ScopeContext interface {
 	Contract() Contract
 }
 
+//will need a wrapper for scopecontext - in geth sc has fields of m s c, not methods, wrapper will need to go in wrappers.go, if there are private objects wrappers need to be in same package
+
 type Memory interface {
-  GetCopy() []byte
+  GetCopy(int64, int64) []byte
   Len()     int
 }
 
@@ -136,3 +137,5 @@ type Logger interface {
 type PluginLoader interface{
   Lookup(name string, validate func(interface{}) bool) []interface{}
 }
+
+
