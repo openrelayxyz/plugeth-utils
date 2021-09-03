@@ -1,10 +1,11 @@
 package core
 
 import (
-  "context"
-  "math/big"
-  "time"
-  "github.com/holiman/uint256"
+	"context"
+	"math/big"
+	"time"
+
+	"github.com/holiman/uint256"
 )
 
 type Backend interface {
@@ -23,10 +24,10 @@ type Backend interface {
 	HeaderByNumber(ctx context.Context, number int64) ([]byte, error) // RLP encoded header
 	HeaderByHash(ctx context.Context, hash Hash) ([]byte, error)
 	// HeaderByNumberOrHash(ctx context.Context, blockNrOrHash rpc.BlockNumberOrHash) (*types.Header, error)
-	CurrentHeader() []byte // RLP encoded header
-	CurrentBlock() []byte // RLP encoded block
+	CurrentHeader() []byte                                           // RLP encoded header
+	CurrentBlock() []byte                                            // RLP encoded block
 	BlockByNumber(ctx context.Context, number int64) ([]byte, error) // RLP encoded block
-	BlockByHash(ctx context.Context, hash Hash) ([]byte, error) // RLP encoded block
+	BlockByHash(ctx context.Context, hash Hash) ([]byte, error)      // RLP encoded block
 	// BlockByNumberOrHash(ctx context.Context, blockNrOrHash rpc.BlockNumberOrHash) (*types.Block, error)
 	// StateAndHeaderByNumber(ctx context.Context, number rpc.BlockNumber) (*state.StateDB, *types.Header, error)
 	// StateAndHeaderByNumberOrHash(ctx context.Context, blockNrOrHash rpc.BlockNumberOrHash) (*state.StateDB, *types.Header, error)
@@ -38,10 +39,10 @@ type Backend interface {
 	SubscribeChainSideEvent(ch chan<- ChainSideEvent) Subscription
 
 	// Transaction pool API
-	SendTx(ctx context.Context, signedTx []byte) error // RLP Encoded Transaction
+	SendTx(ctx context.Context, signedTx []byte) error                                     // RLP Encoded Transaction
 	GetTransaction(ctx context.Context, txHash Hash) ([]byte, Hash, uint64, uint64, error) // RLP Encoded transaction
-	GetPoolTransactions() ([][]byte, error) // []RLP ecnoded transactions
-	GetPoolTransaction(txHash Hash) []byte // RLP encoded transaction
+	GetPoolTransactions() ([][]byte, error)                                                // []RLP ecnoded transactions
+	GetPoolTransaction(txHash Hash) []byte                                                 // RLP encoded transaction
 	GetPoolNonce(ctx context.Context, addr Address) (uint64, error)
 	Stats() (pending int, queued int)
 	TxPoolContent() (map[Address][][]byte, map[Address][][]byte) // RLP encoded transactions
@@ -50,14 +51,13 @@ type Backend interface {
 	// Filter API
 	BloomStatus() (uint64, uint64)
 	GetLogs(ctx context.Context, blockHash Hash) ([][]byte, error) // []RLP encoded logs
-	SubscribeLogsEvent(ch chan<- [][]byte) Subscription // []RLP encoded logs
-	SubscribePendingLogsEvent(ch chan<- [][]byte) Subscription // RLP Encoded logs
-	SubscribeRemovedLogsEvent(ch chan<- []byte) Subscription // RLP encoded logs
+	SubscribeLogsEvent(ch chan<- [][]byte) Subscription            // []RLP encoded logs
+	SubscribePendingLogsEvent(ch chan<- [][]byte) Subscription     // RLP Encoded logs
+	SubscribeRemovedLogsEvent(ch chan<- []byte) Subscription       // RLP encoded logs
 
 	// ChainConfig() *params.ChainConfig
 	// Engine() consensus.Engine
 }
-
 
 type OpCode byte
 
@@ -70,71 +70,65 @@ type TracerResult interface {
 }
 
 type ScopeContext interface {
-	Memory()   Memory
-	Stack()    Stack
+	Memory() Memory
+	Stack() Stack
 	Contract() Contract
 }
 
 type Memory interface {
-  GetCopy(int64, int64) []byte
-  Len()     int
+	GetCopy(int64, int64) []byte
+	Len() int
 }
 
 type Stack interface {
-  Back(n int) *uint256.Int
-  Len() int
+	Back(n int) *uint256.Int
+	Len() int
 }
 
 type Contract interface {
-  AsDelegate() Contract
-  GetOp(n uint64) OpCode
-  GetByte(n uint64) byte
-  Caller() Address
-  UseGas(gas uint64) (ok bool)
-  Address() Address
-  Value() *big.Int
+	AsDelegate() Contract
+	GetOp(n uint64) OpCode
+	GetByte(n uint64) byte
+	Caller() Address
+	Address() Address
+	Value() *big.Int
 }
 
-type Downloader interface{
-  Progress() Progress
+type Downloader interface {
+	Progress() Progress
 }
 
-type Progress interface{
-  StartingBlock() uint64
-  CurrentBlock() uint64
-  HighestBlock() uint64
-  PulledStates() uint64
-  KnownStates() uint64
+type Progress interface {
+	StartingBlock() uint64
+	CurrentBlock() uint64
+	HighestBlock() uint64
+	PulledStates() uint64
+	KnownStates() uint64
 }
 
-
-type Node interface{
-  Server() Server
-  DataDir() string
-  InstanceDir() string
-  IPCEndpoint() string
-  HTTPEndpoint() string
-  WSEndpoint() string
-  ResolvePath(x string) string
+type Node interface {
+	Server() Server
+	DataDir() string
+	InstanceDir() string
+	IPCEndpoint() string
+	HTTPEndpoint() string
+	WSEndpoint() string
+	ResolvePath(x string) string
 }
 
-
-type Server interface{
-  PeerCount() int
+type Server interface {
+	PeerCount() int
 }
-
 
 type Logger interface {
-  Trace(string, ...interface{})
-  Debug(string, ...interface{})
-  Info(string, ...interface{})
-  Warn(string, ...interface{})
-  Crit(string, ...interface{})
-  Error(string, ...interface{})
+	Trace(string, ...interface{})
+	Debug(string, ...interface{})
+	Info(string, ...interface{})
+	Warn(string, ...interface{})
+	Crit(string, ...interface{})
+	Error(string, ...interface{})
 }
 
-type PluginLoader interface{
-  Lookup(name string, validate func(interface{}) bool) []interface{}
+type PluginLoader interface {
+	Lookup(name string, validate func(interface{}) bool) []interface{}
 }
-
-
