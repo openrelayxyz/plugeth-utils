@@ -66,7 +66,34 @@ type TracerResult interface {
 	CaptureState(pc uint64, op OpCode, gas, cost uint64, scope ScopeContext, rData []byte, depth int, err error)
 	CaptureFault(pc uint64, op OpCode, gas, cost uint64, scope ScopeContext, depth int, err error)
 	CaptureEnd(output []byte, gasUsed uint64, t time.Duration, err error)
-	Result() interface{}
+	Result() (interface{}, error)
+}
+
+type StateDB interface {
+	GetBalance(Address) *big.Int
+
+	GetNonce(Address) uint64
+
+	GetCodeHash(Address) Hash
+	GetCode(Address) []byte
+	GetCodeSize(Address) int
+
+	GetRefund() uint64
+
+	GetCommittedState(Address, Hash) Hash
+	GetState(Address, Hash) Hash
+
+	HasSuicided(Address) bool
+
+	// Exist reports whether the given account exists in state.
+	// Notably this should also return true for suicided accounts.
+	Exist(Address) bool
+	// Empty returns whether the given account is empty. Empty
+	// is defined according to EIP161 (balance = nonce = code = 0).
+	Empty(Address) bool
+
+	AddressInAccessList(addr Address) bool
+	SlotInAccessList(addr Address, slot Hash) (addressOk bool, slotOk bool)
 }
 
 type ScopeContext interface {
