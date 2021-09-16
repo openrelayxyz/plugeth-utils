@@ -158,4 +158,16 @@ type Logger interface {
 
 type PluginLoader interface {
 	Lookup(name string, validate func(interface{}) bool) []interface{}
+	GetFeed() Feed
+}
+
+
+type Subscription interface {
+	Err() <-chan error // returns the error channel
+	Unsubscribe()      // cancels sending of events, closing the error channel
+}
+
+type Feed interface {
+	Send(interface{}) int
+	Subscribe(channel interface{}) Subscription
 }
