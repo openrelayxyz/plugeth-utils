@@ -37,14 +37,14 @@ Plugins are packages which contain premade plugins as well as a location provide
 Dependency Scheme
 -----------------
 
-**todo: copy on version number protocol**
+.. todo:: needs elaboration of dependency scheme
 
 
 
 
 
 
-.. _obscures security updates as optimixations: https://blog.openrelay.xyz/vulnerability-lifecycle-framework-geth/
+.. _obscures security updates as optimizations: https://blog.openrelay.xyz/vulnerability-lifecycle-framework-geth/
 .. _PluGeth: https://github.com/openrelayxyz/plugeth
 .. _PluGeth-Utils: https://github.com/openrelayxyz/plugeth-utils
 .. _PluGeth-Plugins: https://github.com/openrelayxyz/plugeth-plugin

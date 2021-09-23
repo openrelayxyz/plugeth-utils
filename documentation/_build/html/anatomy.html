@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anatomy of a Plugin &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Plugin Anatomy &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -15,7 +15,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Build" href="build.html" />
+    <link rel="next" title="Build and Deploy" href="build.html" />
     <link rel="prev" title="Plugin Hooks" href="hooks.html" /> 
 </head>
 
@@ -39,27 +39,19 @@
 <li class="toctree-l1"><a class="reference internal" href="project.html">Project Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hooks.html">Plugin Hooks</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Anatomy of a Plugin</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#flags">Flags</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#subcommands">Subcommands</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#initialize">Initialize</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#initializenode">InitializeNode</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tracers">Tracers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#livetracer">LiveTracer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#getapis">GetAPIs</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Plugin Anatomy</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="build.html">Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_hooks.html">Plugin Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contact</span></p>
 <ul>
@@ -80,7 +72,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Anatomy of a Plugin</li>
+      <li>Plugin Anatomy</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/anatomy.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -90,115 +82,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="anatomy-of-a-plugin">
-<span id="anatomy"></span><h1>Anatomy of a Plugin<a class="headerlink" href="#anatomy-of-a-plugin" title="Permalink to this headline">¶</a></h1>
-<p>Plugins for Plugeth use Golang’s <a class="reference external" href="https://pkg.go.dev/plugin">Native Plugin System</a>. Plugin modules must export variables using specific names and types. These will be processed by the plugin loader, and invoked at certain points during Geth’s operations.</p>
-<div class="section" id="api">
-<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="flags">
-<h3>Flags<a class="headerlink" href="#flags" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p><strong>Name:</strong> Flags</p></li>
-<li><p><strong>Type:</strong> <a class="reference external" href="https://pkg.go.dev/flag#FlagSet">flag.FlagSet</a></p></li>
-<li><p><strong>Behavior:</strong> This FlagSet will be parsed and your plugin will be able to access the resulting flags. Flags will be passed to Geth from the command line and are intended to  of the plugin. Note that if any flags are provided, certain checks are disabled within Geth to avoid failing due to unexpected flags.</p></li>
-</ul>
-</div>
-<div class="section" id="subcommands">
-<h3>Subcommands<a class="headerlink" href="#subcommands" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p><strong>Name:</strong> Subcommands</p></li>
-<li><p><strong>Type:</strong> map[string]func(ctx <a class="reference external" href="https://pkg.go.dev/github.com/urfave/cli#Context">*cli.Context</a>, args []string) error</p></li>
-<li><p><strong>Behavior:</strong> If Geth is invoked with <code class="docutils literal notranslate"><span class="pre">./geth</span> <span class="pre">YOUR_COMMAND</span></code>, the plugin loader will look for <code class="docutils literal notranslate"><span class="pre">YOUR_COMMAND</span></code> within this map, and invoke the corresponding function. This can be useful for certain behaviors like manipulating Geth’s database without having to build a separate binary.</p></li>
-</ul>
-</div>
-<div class="section" id="initialize">
-<h3>Initialize<a class="headerlink" href="#initialize" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p><strong>Name:</strong> Initialize</p></li>
-<li><p><strong>Type:</strong> func(<a href="#id1"><span class="problematic" id="id2">*</span></a>cli.Context, core.PluginLoader, core.logs )</p></li>
-<li><p><strong>Behavior:</strong> Called as soon as the plugin is loaded, with the cli context and a reference to the plugin loader. This is your plugin’s opportunity to initialize required variables as needed. Note that using the context object you can check arguments, and optionally can manipulate arguments if needed for your plugin.</p></li>
-</ul>
-<p><span class="xref std std-ref">Core vs Restricted packages in Plugeth-utils</span></p>
-<p><strong>todo: explain that plugin could provide node.Node with restricted.backend</strong></p>
-</div>
-<div class="section" id="initializenode">
-<h3>InitializeNode<a class="headerlink" href="#initializenode" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p><strong>Name:</strong> InitializeNode</p></li>
-<li><p><strong>Type:</strong> func(core.Node, core.Backend)</p></li>
-<li><p><strong>Behavior:</strong> This is called as soon as the Geth node is initialized. The core.Node object represents the running node with p2p and RPC capabilities, while the Backend gives you access to a wide array of data you may need to access.</p></li>
-</ul>
-</div>
-<div class="section" id="tracers">
-<h3>Tracers<a class="headerlink" href="#tracers" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p><strong>Name:</strong> Tracers</p></li>
-<li><p><strong>Type:</strong> map[string]TracerResult</p></li>
-<li><p><strong>Behavior:</strong> When calling debug.traceX functions (such as <code class="docutils literal notranslate"><span class="pre">debug_traceCall</span></code> and <code class="docutils literal notranslate"><span class="pre">debug_traceTransaction</span></code>) the tracer can be specified as a key to this map and the tracer used will be the TracerResult specified here. TracerResult objects must match the interface:</p></li>
-</ul>
-<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="s">``</span><span class="c1">// CaptureStart is called at the start of each transaction</span>
-<span class="nx">CaptureStart</span><span class="p">(</span><span class="nx">env</span> <span class="nx">core</span><span class="p">.</span><span class="nx">EVM</span><span class="p">,</span> <span class="nx">from</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Address</span><span class="p">,</span> <span class="nx">to</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Address</span><span class="p">,</span> <span class="nx">create</span> <span class="kt">bool</span><span class="p">,</span> <span class="nx">input</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">gas</span> <span class="kt">uint64</span><span class="p">,</span> <span class="nx">value</span> <span class="o">*</span><span class="nx">big</span><span class="p">.</span><span class="nx">Int</span><span class="p">)</span> <span class="p">{}</span>
-<span class="c1">// CaptureState is called for each opcode</span>
-<span class="nx">CaptureState</span><span class="p">(</span><span class="nx">env</span> <span class="nx">core</span><span class="p">.</span><span class="nx">EVM</span><span class="p">,</span> <span class="nx">pc</span> <span class="kt">uint64</span><span class="p">,</span> <span class="nx">op</span> <span class="nx">core</span><span class="p">.</span><span class="nx">OpCode</span><span class="p">,</span> <span class="nx">gas</span><span class="p">,</span> <span class="nx">cost</span> <span class="kt">uint64</span><span class="p">,</span> <span class="nx">scope</span> <span class="o">*</span><span class="nx">vm</span><span class="p">.</span><span class="nx">ScopeContext</span><span class="p">,</span> <span class="nx">rData</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">depth</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{}</span>
-<span class="c1">// CaptureFault is called when an error occurs in the EVM</span>
-<span class="nx">CaptureFault</span><span class="p">(</span><span class="nx">env</span> <span class="nx">core</span><span class="p">.</span><span class="nx">EVM</span><span class="p">,</span> <span class="nx">pc</span> <span class="kt">uint64</span><span class="p">,</span> <span class="nx">op</span> <span class="nx">core</span><span class="p">.</span><span class="nx">OpCode</span><span class="p">,</span> <span class="nx">gas</span><span class="p">,</span> <span class="nx">cost</span> <span class="kt">uint64</span><span class="p">,</span> <span class="nx">scope</span> <span class="o">*</span><span class="nx">vm</span><span class="p">.</span><span class="nx">ScopeContext</span><span class="p">,</span> <span class="nx">depth</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{}</span>
-<span class="c1">// CaptureEnd is called at the end of each transaction</span>
-<span class="nx">CaptureEnd</span><span class="p">(</span><span class="nx">output</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">gasUsed</span> <span class="kt">uint64</span><span class="p">,</span> <span class="nx">t</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{}</span>
-<span class="c1">// GetResult should return a JSON serializable result object to respond to the trace call</span>
-<span class="nx">GetResult</span><span class="p">()</span> <span class="p">(</span><span class="kd">interface</span><span class="p">{},</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{}</span><span class="s">``</span>
-</pre></div>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Modifying the values passed into tracer functions can alter the
-results of the EVM execution in unpredictable ways. Additonally, some objects may be reused acress calls, so data you wish to capture should be copied rather than retianed by reference.</p>
-</div>
-</div>
-<div class="section" id="livetracer">
-<h3>LiveTracer<a class="headerlink" href="#livetracer" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p><strong>Name:</strong> LiveTracers</p></li>
-<li><p><strong>Type:</strong> core.Tracer</p></li>
-<li><p><strong>Behavior:</strong> This tracer is used for tracing transactions as they are processed within blocks. Note that if a block does not validate, some transactions may be processed that don’t end up in blocks, so be sure to check transactions against finalized blocks.</p></li>
-</ul>
-<p>The interface for a vm.Tracer is similar to a TracerResult (above), but does not require a <code class="docutils literal notranslate"><span class="pre">GetResult()</span></code> function.</p>
-</div>
-<div class="section" id="getapis">
-<h3>GetAPIs<a class="headerlink" href="#getapis" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p><strong>Name:</strong> GetAPIs</p></li>
-<li><p><strong>Type:</strong> func(core.Node, core.Backend) []rpc.API</p></li>
-<li><p><strong>Behavior:</strong> This allows you to register new RPC methods to run within Geth.</p></li>
-</ul>
-<p>The GetAPIs function itself will generally be fairly brief, and will looks something like this:</p>
-<div class="highlight-go notranslate"><div class="highlight"><pre><span></span>  <span class="s">``</span><span class="kd">func</span> <span class="nx">GetAPIs</span><span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">node</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">backend</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Backend</span><span class="p">)</span> <span class="p">[]</span><span class="nx">core</span><span class="p">.</span><span class="nx">API</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="p">[]</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">API</span><span class="p">{</span>
-   <span class="p">{</span>
-     <span class="nx">Namespace</span><span class="p">:</span> <span class="s">&quot;mynamespace&quot;</span><span class="p">,</span>
-     <span class="nx">Version</span><span class="p">:</span>      <span class="s">&quot;1.0&quot;</span><span class="p">,</span>
-     <span class="nx">Service</span><span class="p">:</span>      <span class="o">&amp;</span><span class="nx">MyService</span><span class="p">{</span><span class="nx">backend</span><span class="p">},</span>
-     <span class="nx">Public</span><span class="p">:</span>              <span class="kc">true</span><span class="p">,</span>
-   <span class="p">},</span>
-  <span class="p">}</span>
-<span class="p">}</span><span class="s">``</span>
-</pre></div>
-</div>
-<p>The bulk of the implementation will be in the <code class="docutils literal notranslate"><span class="pre">MyService</span></code> struct. MyService should be a struct with public functions. These functions can have two different types of signatures:</p>
-<ul class="simple">
-<li><p>RPC Calls: For straight RPC calls, a function should have a <code class="docutils literal notranslate"><span class="pre">context.Context</span></code> object as the first argument, followed by an arbitrary number of JSON marshallable arguments, and return either a single JSON marshal object, or a JSON marshallable object and an error. The RPC framework will take care of decoding inputs to this function and encoding outputs, and if the error is non-nil it will serve an error response.</p></li>
-<li><p>Subscriptions: For subscriptions (supported on IPC and websockets), a function should have a <code class="docutils literal notranslate"><span class="pre">context.Context</span></code> object as the first argument followed by an arbitrary number of JSON marshallable arguments, and should return an <code class="docutils literal notranslate"><span class="pre">*rpc.Subscription</span></code> object. The subscription object can be created with <code class="docutils literal notranslate"><span class="pre">rpcSub</span> <span class="pre">:=</span> <span class="pre">notifier.CreateSubscription()</span></code>, and JSON marshallable data can be sent to the subscriber with <code class="docutils literal notranslate"><span class="pre">notifier.Notify(rpcSub.ID,</span> <span class="pre">b)</span></code>.</p></li>
-</ul>
-<p>A very simple MyService might look like:</p>
-<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="s">``</span><span class="kd">type</span> <span class="nx">MyService</span> <span class="kd">struct</span><span class="p">{}</span>
-
-  <span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">MyService</span><span class="p">)</span> <span class="nx">HelloWorld</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="s">&quot;Hello World&quot;</span>
-  <span class="p">}</span><span class="s">``</span>
-</pre></div>
-</div>
-<p>And the client could access this with an rpc call to
-<code class="docutils literal notranslate"><span class="pre">mynamespace_helloworld</span></code></p>
-</div>
+  <div class="section" id="plugin-anatomy">
+<span id="anatomy"></span><h1>Plugin Anatomy<a class="headerlink" href="#plugin-anatomy" title="Permalink to this headline">¶</a></h1>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>fill in disections of archetypal plugins</p>
 </div>
 </div>
 
@@ -207,7 +95,7 @@ results of the EVM execution in unpredictable ways. Additonally, some objects ma
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="hooks.html" class="btn btn-neutral float-left" title="Plugin Hooks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="build.html" class="btn btn-neutral float-right" title="Build" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="build.html" class="btn btn-neutral float-right" title="Build and Deploy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

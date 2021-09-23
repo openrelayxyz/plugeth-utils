@@ -1,7 +1,8 @@
 .. _build:
 
-Build
-=====
+================
+Build and Deploy
+================
 
 .. contents:: :local:
 
