@@ -48,15 +48,19 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hooks.html">Plugin Hooks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="anatomy.html">Anatomy of a Plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="anatomy.html">Plugin Anatomy</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="build.html">Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_hooks.html">Plugin Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contact</span></p>
 <ul>
@@ -92,7 +96,7 @@
 <p>Design Goals</p>
 <p>The upstream Geth client exists primarily to serve as a client for the Ethereum mainnet, though it also supports a number of popular testnets. Supporting the Ethereum mainnet is a big enough challenge in its own right that the Geth team generally avoids changes to support other networks, or to provide features only a small handful of users would be interested in.</p>
 <p>The result is that many projects have forked Geth. Some implement their own consensus protocols or alter the behavior of the EVM to support other networks. Others are designed to extract information from the Ethereum mainnet in ways the standard Geth client does not support.</p>
-<p>Creating numerous different forks to fill a variety of different needs comes with a number of drawbacks. Forks tend to drift apart from each other. Many networks that forked from Geth long ago have stopped merging updates from Geth; this makes some sense, given that those networks have moved in different directions than Geth and merging upstream changes while properly maintaining consensus rules of an existing network could prove quite challenging. But not merging changes from upstream can mean that security updates are easily missed, especially when the upstream team <a href="#id4"><span class="problematic" id="id5">`obscures security updates as optimizations`_</span></a> as a matter of process.</p>
+<p>Creating numerous different forks to fill a variety of different needs comes with a number of drawbacks. Forks tend to drift apart from each other. Many networks that forked from Geth long ago have stopped merging updates from Geth; this makes some sense, given that those networks have moved in different directions than Geth and merging upstream changes while properly maintaining consensus rules of an existing network could prove quite challenging. But not merging changes from upstream can mean that security updates are easily missed, especially when the upstream team <a class="reference external" href="https://blog.openrelay.xyz/vulnerability-lifecycle-framework-geth/">obscures security updates as optimizations</a> as a matter of process.</p>
 <p>PluGeth aims to provide a single Geth fork that developers can choose to extend rather than forking the Geth project. Out of the box, PluGeth behaves exactly like upstream Geth, but by installing plugins written in Golang, developers can extend its functionality in a wide variety of ways.</p>
 <div class="section" id="three-repositories">
 <h2>Three Repositories<a class="headerlink" href="#three-repositories" title="Permalink to this headline">¶</a></h2>
@@ -112,7 +116,10 @@
 </div>
 <div class="section" id="dependency-scheme">
 <h2>Dependency Scheme<a class="headerlink" href="#dependency-scheme" title="Permalink to this headline">¶</a></h2>
-<p><strong>todo: copy on version number protocol</strong></p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>needs elaboration of dependency scheme</p>
+</div>
 </div>
 </div>
 

@@ -8,10 +8,11 @@ PluGeth
 
 PluGeth is a fork of the `Go Ethereum Client Geth`_ that implements a plugin architecture, allowing developers to extend Geth's capabilities in a number of different ways using plugins, rather than having to create additional, new forks of Geth.
 
-**WARNING: UNSTABLE API**
+.. warning:: Right now PluGeth is in early development. We are 
+             still settling on some of the plugin APIs, and are
+             not yet making official releases. From an operational 
+             perspective, PluGeth should be as stable as upstream Geth less whatever isstability is added by plugins you might run. But if you plan to run PluGeth today, be aware that furture updates will likely break you plugins. 
 
-
-Right now PluGeth is in early development. We are still settling on some of the plugin APIs, and are not yet making official releases. From an operational perspective, PluGeth should be as stable as upstream Geth less whatever instability is added by plugins you might run. But if you plan to run PluGeth today, be aware that future updates will likely break your plugins.
 
 
 Table of Contents
@@ -26,6 +27,7 @@ Table of Contents
     types
     hooks
     anatomy
+    
 
 .. toctree::
     :maxdepth: 1
@@ -37,8 +39,11 @@ Table of Contents
     :maxdepth: 1
     :caption: Reference
 
-    sytem_req
+    system_req
+    plugin_loader
+    plugin_hooks
     core_restricted
+    api
 
 .. toctree::
     :maxdepth: 1

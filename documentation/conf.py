@@ -19,7 +19,7 @@
 
 project = 'Plugeth'
 copyright = '2021, Philip Morlier'
-author = 'Philip Morlier'
+author = 'Philip Morlier, Austin Roberts'
 
 # The full version, including alpha/beta/rc tags
 release = 'Austin Roberts'
@@ -31,7 +31,13 @@ release = 'Austin Roberts'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+	'sphinx.ext.intersphinx', 
+	'sphinx.ext.autodoc', 
+	'sphinx.ext.doctest',
+	'sphinx.ext.todo',
 ]
+
+todo_include_todos=True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

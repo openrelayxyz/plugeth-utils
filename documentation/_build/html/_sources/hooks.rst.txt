@@ -4,5 +4,4 @@
 Plugin Hooks
 ============
 
-
-**todo: discussion on plugin hooks**
+.. todo:: discussion of plugin hooks
