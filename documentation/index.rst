@@ -40,7 +40,7 @@ Table of Contents
 
     system_req
     plugin_loader
-    hooks
+    plugin_hooks
     core_restricted
     api
 
