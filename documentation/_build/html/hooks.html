@@ -15,8 +15,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Plugin Anatomy" href="anatomy.html" />
-    <link rel="prev" title="Basic Types of Plugins" href="types.html" /> 
+    <link rel="next" title="Core vs Restricted packages in Plugeth-utils" href="core_restricted.html" />
+    <link rel="prev" title="Plugin Loader" href="plugin_loader.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,10 +35,9 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Overview</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="project.html">Project Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Plugin Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="anatomy.html">Plugin Anatomy</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
@@ -46,10 +45,19 @@
 <li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugin_hooks.html">Plugin Hooks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Plugin Hooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#selected-hooks">Selected Hooks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#stateupdate">StateUpdate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#appendancient">AppendAncient</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#newhead">NewHead</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#getrpccalls">GetRPCCalls</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
@@ -84,9 +92,38 @@
              
   <div class="section" id="plugin-hooks">
 <span id="hooks"></span><h1>Plugin Hooks<a class="headerlink" href="#plugin-hooks" title="Permalink to this headline">¶</a></h1>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>discussion of plugin hooks</p>
+<p>The key to understanding a plugin is understanding its corresponding hook. Broadly, plugin hooks can be thought of as functions which deliver a function signiture to the <strong>plugin loader</strong>. The signature matches that of the function(s) called by the plugin and describes the data that is being captured and how the plugin will deliver said data upon invocation.</p>
+<p>The public plugin hook function should follow the naming convention <code class="docutils literal notranslate"><span class="pre">Plugin$HookName</span></code>. The first argument should be a `` core.PluginLoader``, followed by any arguments required by the functions to be provided by any plugins implementing this hook.</p>
+<p><strong>Public and Private Hook Functions</strong></p>
+<p>Each hook provides both a Public and private version. The private plugin hook function should bear the same name as the public plugin hook function, but with a lower case first letter. The signature should match the public plugin hook function, except that the first argument referencing the PluginLoader should be removed. It should invoke the public plugin hook function on plugins.DefaultPluginLoader. It should always verify that the DefaultPluginLoader is non-nil, log warning and return if the DefaultPluginLoader has not been initialized.</p>
+<p><strong>Invocation</strong></p>
+<p>the private plugin hook function should be invoked, with the appropriate arguments, in a single line within the Geth codebase inorder to minimize unexpected conflicts merging upstream Geth into plugeth.</p>
+<div class="section" id="selected-hooks">
+<h2>Selected Hooks<a class="headerlink" href="#selected-hooks" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="stateupdate">
+<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/core/state/plugin_hooks.go">StateUpdate</a><a class="headerlink" href="#stateupdate" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/core/state/statedb.go#L955">Invocation</a></p>
+<p>The state update plugin provides a snapshot of the state subsystem in the form of a a stateUpdate object. The stateUpdate object contains all information transformed by a transaction but not the transaction itself.</p>
+<p>Invoked for each new block, StateUpdate provides the changes to the blockchain state. root corresponds to the state root of the new block. parentRoot corresponds to the state root of the parent block. destructs serves as a set of accounts that self-destructed in this block. accounts maps the hash of each account address to the SlimRLP encoding of the account data. storage maps the hash of each account to a map of that account’s stored data.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>StateUpdate is only called if Geth is running with
+<code class="docutils literal notranslate"><span class="pre">-snapshots=true</span></code>. This is the default behavior for Geth, but if you are explicitly running with <code class="docutils literal notranslate"><span class="pre">--snapshot=false</span></code> this function will not be invoked.</p>
+</div>
+</div>
+<div class="section" id="appendancient">
+<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/core/rawdb/plugin_hooks.go">AppendAncient</a><a class="headerlink" href="#appendancient" title="Permalink to this headline">¶</a></h3>
+<p>Invoked when the freezer moves a block from LevelDB to the ancients database. <code class="docutils literal notranslate"><span class="pre">number</span></code> is the number of the block. <code class="docutils literal notranslate"><span class="pre">hash</span></code> is the 32 byte hash of the block as a raw <code class="docutils literal notranslate"><span class="pre">[]byte</span></code>. <code class="docutils literal notranslate"><span class="pre">header</span></code>, <code class="docutils literal notranslate"><span class="pre">body</span></code>, and <code class="docutils literal notranslate"><span class="pre">receipts</span></code> are the RLP encoded versions of their respective block elements. <code class="docutils literal notranslate"><span class="pre">td</span></code> is the byte encoded total difficulty of the block.</p>
+</div>
+<div class="section" id="newhead">
+<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/core/plugin_hooks.go#L108">NewHead</a><a class="headerlink" href="#newhead" title="Permalink to this headline">¶</a></h3>
+<p>Invoked when a new block becomes the canonical latest block. Note that if several blocks are processed in a group (such as during a reorg) this may not be called for each block. You should track the prior latest head if you need to process intermediate blocks.</p>
+</div>
+<div class="section" id="getrpccalls">
+<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/rpc/plugin_hooks.go">GetRPCCalls</a><a class="headerlink" href="#getrpccalls" title="Permalink to this headline">¶</a></h3>
+<p>Invoked when the RPC handler registers a method call. returns the call <code class="docutils literal notranslate"><span class="pre">id</span></code>, method <code class="docutils literal notranslate"><span class="pre">name</span></code>, and any <code class="docutils literal notranslate"><span class="pre">params</span></code> that may have been passed in.</p>
+<p><strong>I am struggling all of assudden with if this is really this best course of action. Giving all of this reference, seems to beg the -utils vs plugeth conversation and I am not sure that is a smart thing to get into.</strong></p>
+</div>
 </div>
 </div>
 
@@ -94,8 +131,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="types.html" class="btn btn-neutral float-left" title="Basic Types of Plugins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="anatomy.html" class="btn btn-neutral float-right" title="Plugin Anatomy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="plugin_loader.html" class="btn btn-neutral float-left" title="Plugin Loader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="core_restricted.html" class="btn btn-neutral float-right" title="Core vs Restricted packages in Plugeth-utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

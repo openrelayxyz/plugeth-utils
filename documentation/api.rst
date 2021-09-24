@@ -46,7 +46,7 @@ Tracers
 
 .. code-block:: go
 
-   ``// CaptureStart is called at the start of each transaction
+   // CaptureStart is called at the start of each transaction
    CaptureStart(env core.EVM, from core.Address, to core.Address, create bool, input []byte, gas uint64, value *big.Int) {}
    // CaptureState is called for each opcode
    CaptureState(env core.EVM, pc uint64, op core.OpCode, gas, cost uint64, scope *vm.ScopeContext, rData []byte, depth int, err error) {}
@@ -55,12 +55,78 @@ Tracers
    // CaptureEnd is called at the end of each transaction
    CaptureEnd(output []byte, gasUsed uint64, t time.Duration, err error) {}
    // GetResult should return a JSON serializable result object to respond to the trace call
-   GetResult() (interface{}, error) {}``
+   GetResult() (interface{}, error) {}
 
 
 .. warning:: Modifying the values passed into tracer functions can
              alter the 
-             results of the EVM execution in unpredictable ways. Additonally, some objects may be reused acress calls, so data you wish to capture should be copied rather than retianed by reference. 
+             results of the EVM execution in unpredictable ways. Additopackage main
+
+import (
+  "github.com/openrelayxyz/plugeth-utils/core"
+  "gopkg.in/urfave/cli.v1"
+)
+
+var (
+  log core.Logger
+)
+
+type myservice struct{}
+
+func (*myservice) Hello() string {
+  return "Hello world"
+}
+
+func Initialize(ctx *cli.Context, loader core.PluginLoader, logger core.Logger) {
+  log = logger
+  log.Info("Initialized hello")
+}
+
+func GetAPIs(node core.Node, backend core.Backend) []core.API {
+  defer log.Info("APIs Initialized")
+  return []core.API{
+    {
+      Namespace: "mynamespace",
+      Version:   "1.0",
+      Service:   &myservice{},
+      Public:    true,
+    },
+  }
+}
+package main
+
+import (
+  "github.com/openrelayxyz/plugeth-utils/core"
+  "gopkg.in/urfave/cli.v1"
+)
+
+var (
+  log core.Logger
+)
+
+type myservice struct{}
+
+func (*myservice) Hello() string {
+  return "Hello world"
+}
+
+func Initialize(ctx *cli.Context, loader core.PluginLoader, logger core.Logger) {
+  log = logger
+  log.Info("Initialized hello")
+}
+
+func GetAPIs(node core.Node, backend core.Backend) []core.API {
+  defer log.Info("APIs Initialized")
+  return []core.API{
+    {
+      Namespace: "mynamespace",
+      Version:   "1.0",
+      Service:   &myservice{},
+      Public:    true,
+    },
+  }
+}
+nally, some objects may be reused acress calls, so data you wish to capture should be copied rather than retianed by reference. 
 
 LiveTracer
 ----------

@@ -25,7 +25,6 @@ Table of Contents
 
     project
     types
-    hooks
     anatomy
     
 
@@ -41,7 +40,7 @@ Table of Contents
 
     system_req
     plugin_loader
-    plugin_hooks
+    hooks
     core_restricted
     api
 
