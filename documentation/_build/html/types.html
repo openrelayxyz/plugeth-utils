@@ -15,7 +15,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Plugin Anatomy" href="anatomy.html" />
+    <link rel="next" title="Run" href="run.html" />
     <link rel="prev" title="Project Design" href="project.html" /> 
 </head>
 
@@ -44,17 +44,18 @@
 <li class="toctree-l2"><a class="reference internal" href="#subscriptions">Subscriptions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="anatomy.html">Plugin Anatomy</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="run.html">Run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom.html">Building a Custom Plugin</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hooks.html">Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_hooks.html">Plugin Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
@@ -99,7 +100,7 @@
 </div>
 <div class="section" id="subcommand">
 <h2>Subcommand<a class="headerlink" href="#subcommand" title="Permalink to this headline">¶</a></h2>
-<p>A subcommand redifines the total behavior of Geth and could stand on its own.</p>
+<p>A subcommand redifines the total behavior of Geth and could stand on its own. I contrast with the other plugin types which, in general, are meant to capture and manipulate information, a subcommand is meant to change to overall behavior of Geth. It may do this in order to capture information but the primary fuctionality is a modulation of geth behaviour.</p>
 </div>
 <div class="section" id="tracers">
 <h2>Tracers<a class="headerlink" href="#tracers" title="Permalink to this headline">¶</a></h2>
@@ -122,7 +123,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="project.html" class="btn btn-neutral float-left" title="Project Design" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="anatomy.html" class="btn btn-neutral float-right" title="Plugin Anatomy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="run.html" class="btn btn-neutral float-right" title="Run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

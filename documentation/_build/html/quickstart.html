@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plugin Anatomy &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Quickstart &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -14,9 +14,7 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Build and Deploy" href="build.html" />
-    <link rel="prev" title="Basic Types of Plugins" href="types.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -35,20 +33,21 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption"><span class="caption-text">Overview</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="project.html">Project Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Plugin Anatomy</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="run.html">Run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom.html">Building a Custom Plugin</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hooks.html">Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_hooks.html">Plugin Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
@@ -71,9 +70,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Plugin Anatomy</li>
+      <li>Quickstart</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/anatomy.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/quickstart.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -81,64 +80,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="plugin-anatomy">
-<span id="anatomy"></span><h1>Plugin Anatomy<a class="headerlink" href="#plugin-anatomy" title="Permalink to this headline">¶</a></h1>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>fill in disections of archetypal plugins</p>
+  <div class="section" id="quickstart">
+<span id="id1"></span><h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+</ul>
 </div>
-<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
-</pre></div>
-</div>
-<dl class="simple">
-<dt>import (</dt><dd><p>“github.com/openrelayxyz/plugeth-utils/core”
-“gopkg.in/urfave/cli.v1”</p>
-</dd>
-</dl>
-<p>)</p>
-<dl class="simple">
-<dt>var (</dt><dd><p>log core.Logger</p>
-</dd>
-</dl>
-<p>)</p>
-<p>type myservice struct{}</p>
-<dl class="simple">
-<dt>func (<a href="#id2"><span class="problematic" id="id3">*</span></a>myservice) Hello() string {</dt><dd><p>return “Hello world”</p>
-</dd>
-</dl>
-<p>}</p>
-<dl class="simple">
-<dt>func Initialize(ctx <a href="#id4"><span class="problematic" id="id5">*</span></a>cli.Context, loader core.PluginLoader, logger core.Logger) {</dt><dd><p>log = logger
-log.Info(“Initialized hello”)</p>
-</dd>
-</dl>
-<p>}</p>
-<dl>
-<dt>func GetAPIs(node core.Node, backend core.Backend) []core.API {</dt><dd><p>defer log.Info(“APIs Initialized”)
-return []core.API{</p>
-<blockquote>
-<div><dl class="simple">
-<dt>{</dt><dd><p>Namespace: “mynamespace”,
-Version:   “1.0”,
-Service:   &amp;myservice{},
-Public:    true,</p>
-</dd>
-</dl>
-<p>},</p>
-</div></blockquote>
-<p>}</p>
-</dd>
-</dl>
-<p>}``</p>
 </div>
 
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="types.html" class="btn btn-neutral float-left" title="Basic Types of Plugins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="build.html" class="btn btn-neutral float-right" title="Build and Deploy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

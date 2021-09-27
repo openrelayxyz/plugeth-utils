@@ -14,7 +14,7 @@ In general these plugins provide new json rpc methods. They will requirre an ini
 Subcommand
 ------------
 
-A subcommand redifines the total behavior of Geth and could stand on its own. 
+A subcommand redifines the total behavior of Geth and could stand on its own. I contrast with the other plugin types which, in general, are meant to capture and manipulate information, a subcommand is meant to change to overall behavior of Geth. It may do this in order to capture information but the primary fuctionality is a modulation of geth behaviour. 
 
 Tracers
 -------

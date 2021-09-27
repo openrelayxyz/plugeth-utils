@@ -15,7 +15,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Plugin Hooks" href="hooks.html" />
+    <link rel="next" title="Plugin Hooks" href="plugin_hooks.html" />
     <link rel="prev" title="System Requirements" href="system_req.html" /> 
 </head>
 
@@ -38,17 +38,18 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="project.html">Project Design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
-<li class="toctree-l1"><a class="reference internal" href="anatomy.html">Plugin Anatomy</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="run.html">Run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom.html">Building a Custom Plugin</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Plugin Loader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hooks.html">Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_hooks.html">Plugin Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
@@ -83,10 +84,8 @@
              
   <div class="section" id="plugin-loader">
 <span id="id1"></span><h1>Plugin Loader<a class="headerlink" href="#plugin-loader" title="Permalink to this headline">¶</a></h1>
-<div class="admonition-todo admonition" id="id2">
-<p class="admonition-title">Todo</p>
-<p>breakdown of plugin loader function</p>
-</div>
+<p>At the heart of the PluGeth project is the <a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/plugins/plugin_loader.go">PluginLoader</a>.</p>
+<p>Upon invocation the PluginLoader will parse through a list of known plugins and either return the plugin name passed to it or, if not found, append to that list. Additionally the loader will check the function signature of the plugin to assure complience with anticipated behavior. Once these checks are passed and the plugin name and function signature is validated the plugin will be invoked.</p>
 </div>
 
 
@@ -94,7 +93,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="system_req.html" class="btn btn-neutral float-left" title="System Requirements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="hooks.html" class="btn btn-neutral float-right" title="Plugin Hooks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="plugin_hooks.html" class="btn btn-neutral float-right" title="Plugin Hooks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
