@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscription &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tracer" href="tracer.html" />
+    <link rel="prev" title="RPC Methods" href="RPC_method.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Plugeth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="project.html">Project Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="custom.html">Building a Custom Plugin</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="RPC_method.html">RPC Methods</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Subscription</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#getapis">GetAPIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subscription-function">Subscription Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#access">Access</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tracer.html">Tracer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom.html#basic-implementation">Basic Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom.html#specialization">Specialization</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Selected Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_writing.html">Hook Writing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Get in touch with us</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Plugeth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="custom.html">Building a Custom Plugin</a> &raquo;</li>
+      <li>Subscription</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/subscription.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="subscription">
+<span id="id1"></span><h1>Subscription<a class="headerlink" href="#subscription" title="Permalink to this headline">¶</a></h1>
+<p>In addition to the initial template containing an intialize function, plugins providing <strong>Subscriptions</strong> will require two additional elements.</p>
+<div class="section" id="getapis">
+<h2>GetAPIs<a class="headerlink" href="#getapis" title="Permalink to this headline">¶</a></h2>
+<p>A GetAPIs method is required in the body of the plugin in order to make the plugin available. The bulk of the implementation will be in the MyService struct. MyService should be a struct which includes two public functions.</p>
+<div class="highlight-Go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">MyService</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">backend</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Backend</span>
+    <span class="nx">stack</span>   <span class="nx">core</span><span class="p">.</span><span class="nx">Node</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">GetAPIs</span><span class="p">(</span><span class="nx">stack</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">backend</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Backend</span><span class="p">)</span> <span class="p">[]</span><span class="nx">core</span><span class="p">.</span><span class="nx">API</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">[]</span><span class="nx">core</span><span class="p">.</span><span class="nx">API</span><span class="p">{</span>
+   <span class="p">{</span>
+      <span class="nx">Namespace</span><span class="p">:</span> <span class="s">&quot;plugeth&quot;</span><span class="p">,</span>
+      <span class="nx">Version</span><span class="p">:</span>   <span class="s">&quot;1.0&quot;</span><span class="p">,</span>
+      <span class="nx">Service</span><span class="p">:</span>   <span class="o">&amp;</span><span class="nx">MyService</span><span class="p">{</span><span class="nx">backend</span><span class="p">,</span> <span class="nx">stack</span><span class="p">},</span>
+      <span class="nx">Public</span><span class="p">:</span>    <span class="kc">true</span><span class="p">,</span>
+   <span class="p">},</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="subscription-function">
+<h2>Subscription Function<a class="headerlink" href="#subscription-function" title="Permalink to this headline">¶</a></h2>
+<p>For subscriptions (supported on IPC and websockets), a function should take MyService as a reciever and a context.Context object as an argument and return a channel and an error. The following is a subscription function that impliments a timer.</p>
+<div class="highlight-Go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">myservice</span><span class="p">)</span> <span class="nx">Timer</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">(</span><span class="o">&lt;-</span><span class="kd">chan</span> <span class="kt">int64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ticker</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">NewTicker</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+        <span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int64</span><span class="p">)</span>
+        <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">defer</span> <span class="nx">ticker</span><span class="p">.</span><span class="nx">Stop</span><span class="p">()</span>
+                <span class="k">for</span> <span class="p">{</span>
+                        <span class="k">select</span> <span class="p">{</span>
+                        <span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Done</span><span class="p">():</span>
+                                <span class="nb">close</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
+                                <span class="k">return</span>
+                        <span class="k">case</span> <span class="nx">t</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">ticker</span><span class="p">.</span><span class="nx">C</span><span class="p">:</span>
+                                <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">t</span><span class="p">.</span><span class="nx">UnixNano</span><span class="p">()</span>
+                        <span class="p">}</span>
+                <span class="p">}</span>
+        <span class="p">}()</span>
+        <span class="k">return</span> <span class="nx">ch</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Notice in the example above, the <code class="docutils literal notranslate"><span class="pre">ctx.Done()</span></code> or
+Context.Done() method closes the channel. If this is not present the go routine will run for the life of the process.</p>
+</div>
+</div>
+<div class="section" id="access">
+<h2>Access<a class="headerlink" href="#access" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Plugins providing subscriptions can be accessed via IPC
+and websockets. In the below example we will be using <a class="reference external" href="https://www.npmjs.com/package/wscat">wscat</a> to connect a websocket to a local Geth node.</p>
+</div>
+<p>As with pre-built plugins, a <code class="docutils literal notranslate"><span class="pre">.so</span></code> will need to be built from <code class="docutils literal notranslate"><span class="pre">main.go</span></code> and moved into <code class="docutils literal notranslate"><span class="pre">~/.ethereum/plugins</span></code>. Geth will need to be started with with <code class="docutils literal notranslate"><span class="pre">--ws</span> <span class="pre">--ws.api=mynamespace``flags.</span> <span class="pre">Additionally</span> <span class="pre">you</span> <span class="pre">will</span> <span class="pre">need</span> <span class="pre">to</span> <span class="pre">include</span> <span class="pre">a</span> <span class="pre">``--http</span></code> flag in order to access the standard json rpc methods.</p>
+<p>After starting Geth, from a seperate terminal run:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>wscat -c ws://127.0.0.1:8546
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Websockets are available via port 8546</p>
+</div>
+<p>Once the connection has been established from the websocket cursor enter the following argument:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="o">{</span><span class="s2">&quot;jsonrpc&quot;</span>:<span class="s2">&quot;2.0&quot;</span>,<span class="s2">&quot;method&quot;</span>:<span class="s2">&quot;mynamespace_hello&quot;</span>,<span class="s2">&quot;params&quot;</span>:<span class="o">[]</span>,<span class="s2">&quot;id&quot;</span>:0<span class="o">}</span>
+
+You should see that the network has responded with:
+</pre></div>
+</div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="sb">``</span><span class="o">{</span><span class="s2">&quot;jsonrpc&quot;</span>:<span class="s2">&quot;2.0&quot;</span>,<span class="s2">&quot;id&quot;</span>:0,<span class="s2">&quot;result&quot;</span>:<span class="s2">&quot;Hello world&quot;</span><span class="o">}</span><span class="sb">``</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="RPC_method.html" class="btn btn-neutral float-left" title="RPC Methods" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tracer.html" class="btn btn-neutral float-right" title="Tracer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Philip Morlier.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

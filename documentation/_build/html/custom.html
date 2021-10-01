@@ -15,7 +15,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="System Requirements" href="system_req.html" />
+    <link rel="next" title="RPC Methods" href="RPC_method.html" />
     <link rel="prev" title="Build and Deploy" href="build.html" /> 
 </head>
 
@@ -41,10 +41,18 @@
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="run.html">Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Building a Custom Plugin</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#most-basic-implimentation">Most Basic implimentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RPC_method.html">RPC Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subscription.html">Subscription</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracer.html">Tracer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-implementation">Basic Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#package">Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initialize">Initialize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initializenode">InitializeNode</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#specialization">Specialization</a></li>
 </ul>
 </li>
@@ -52,10 +60,12 @@
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugin_hooks.html">Plugin Hooks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Version</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Selected Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_writing.html">Hook Writing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contact</span></p>
 <ul>
@@ -88,13 +98,20 @@
              
   <div class="section" id="building-a-custom-plugin">
 <span id="custom"></span><h1>Building a Custom Plugin<a class="headerlink" href="#building-a-custom-plugin" title="Permalink to this headline">¶</a></h1>
-<p>Before setting out to build a plugin it will be helpful to be familiar with the basic <a class="reference internal" href="types.html#types"><span class="std std-ref">Basic Types of Plugins</span></a> of plugins. Depending on what you intend to do certain aspects of implimentation will be neccisary.</p>
-<p>In general, no matter which type of plugin you intend to build, below are common aspects which will be shared by all plugins.</p>
-<div class="section" id="most-basic-implimentation">
-<h2>Most Basic implimentation<a class="headerlink" href="#most-basic-implimentation" title="Permalink to this headline">¶</a></h2>
-<p>A plugin will need its own package located in the Plugeth-Utils packages directory. The package will need to include a main.go from which the .so file will be built. The package and main file should share the same name and the name should be a word that describes the basic functionality of the plugin.</p>
-<p>All plugins will need to be initialized with an <strong>initialize function</strong>. The initialize function will need to be passed at least three arguments: a cli.Context, core.PluginLoader, and a core.Logger.</p>
-<p>And so, all plugins will have an intial template that looks something like this:</p>
+<div class="toctree-wrapper compound">
+</div>
+<p>Before setting out to build a plugin it will be helpful to be familiar with the <a class="reference internal" href="types.html#types"><span class="std std-ref">Basic Types of Plugins</span></a>. deifferent plugins will require different implimentation.</p>
+<div class="section" id="basic-implementation">
+<h2>Basic Implementation<a class="headerlink" href="#basic-implementation" title="Permalink to this headline">¶</a></h2>
+<p>In general, no matter which type of plugin you intend to build, all will share some common aspects.</p>
+<div class="section" id="package">
+<h3>Package<a class="headerlink" href="#package" title="Permalink to this headline">¶</a></h3>
+<p>Any plugin will need its own package located in the Plugeth-Plugins packages directory. The package will need to include a main.go from which the .so file will be built. The package and main file should share the same name and the name should be a word that describes the basic functionality of the plugin.</p>
+</div>
+<div class="section" id="initialize">
+<h3>Initialize<a class="headerlink" href="#initialize" title="Permalink to this headline">¶</a></h3>
+<p>Most plugins will need to be initialized with an Initialize function. The initialize function will need to be passed at least three arguments: a cli.Context, core.PluginLoader, and a core.Logger.</p>
+<p>And so, all plugins could have an intial template that looks something like this:</p>
 <div class="highlight-Go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
@@ -111,10 +128,26 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="initializenode">
+<h3>InitializeNode<a class="headerlink" href="#initializenode" title="Permalink to this headline">¶</a></h3>
+<p>Many plugins will make use of the InitializeNode function. Implimentation will look like so:</p>
+<div class="highlight-Go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">InitializeNode</span><span class="p">(</span><span class="nx">stack</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">b</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Backend</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">backend</span> <span class="p">=</span> <span class="nx">b</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">Info</span><span class="p">(</span><span class="s">&quot;Initialized node and backend&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is called as soon as the Geth node is initialized. The core.Node object represents the running node with p2p and RPC capabilities, while the Backend gives you access to blocks and other data you may need to access.</p>
+</div>
+</div>
 <div class="section" id="specialization">
 <h2>Specialization<a class="headerlink" href="#specialization" title="Permalink to this headline">¶</a></h2>
-<p><strong>Hooks</strong></p>
-<p>Plugeth provides several hooks with which data of various kinds can be captured and manipulated. Once a plugin has been initalized it will be up to the hooks utilized to determine the behavior of the plugin.</p>
+<p>From this point implimentation becomes more specialized to the particular plugin type. Continue from here for specific instructions for the following plugins:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="RPC_method.html#rpc-method"><span class="std std-ref">RPC Methods</span></a></p></li>
+<li><p><a class="reference internal" href="subscription.html#subscription"><span class="std std-ref">Subscription</span></a></p></li>
+<li><p><a class="reference internal" href="tracer.html#tracer"><span class="std std-ref">Tracer</span></a></p></li>
+</ul>
 </div>
 </div>
 
@@ -123,7 +156,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="build.html" class="btn btn-neutral float-left" title="Build and Deploy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="system_req.html" class="btn btn-neutral float-right" title="System Requirements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="RPC_method.html" class="btn btn-neutral float-right" title="RPC Methods" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plugin Hooks &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Selected Plugin Hooks &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -14,7 +14,9 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Hook Writing Guide" href="hook_writing.html" />
+    <link rel="prev" title="Plugin Loader" href="plugin_loader.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,17 +41,31 @@
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="run.html">Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom.html">Building a Custom Plugin</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugin_hooks.html">Plugin Hooks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Version</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Selected Plugin Hooks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#plugin-hooks">Plugin Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stateupdate">StateUpdate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#appendancient">AppendAncient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getrpccalls">GetRPCCalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preprocessblock">PreProcessBlock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preprocesstransaction">PreProcessTransaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blockprocessingerror">BlockProcessingError</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#newhead">NewHead</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#newsideblock">NewSideBlock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reorg">Reorg</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hook_writing.html">Hook Writing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contact</span></p>
 <ul>
@@ -70,7 +86,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Plugin Hooks</li>
+      <li>Selected Plugin Hooks</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/hooks.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -80,19 +96,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="plugin-hooks">
-<span id="hooks"></span><h1>Plugin Hooks<a class="headerlink" href="#plugin-hooks" title="Permalink to this headline">¶</a></h1>
-<p>The key to understanding a plugin is understanding its corresponding hook. Broadly, plugin hooks can be thought of as functions which deliver a function signiture to the <strong>plugin loader</strong>. The signature matches that of the function(s) called by the plugin and describes the data that is being captured and how the plugin will deliver said data upon invocation.</p>
-<p>The public plugin hook function should follow the naming convention <code class="docutils literal notranslate"><span class="pre">Plugin$HookName</span></code>. The first argument should be a `` core.PluginLoader``, followed by any arguments required by the functions to be provided by any plugins implementing this hook.</p>
-<p><strong>Public and Private Hook Functions</strong></p>
-<p>Each hook provides both a Public and private version. The private plugin hook function should bear the same name as the public plugin hook function, but with a lower case first letter. The signature should match the public plugin hook function, except that the first argument referencing the PluginLoader should be removed. It should invoke the public plugin hook function on plugins.DefaultPluginLoader. It should always verify that the DefaultPluginLoader is non-nil, log warning and return if the DefaultPluginLoader has not been initialized.</p>
-<p><strong>Invocation</strong></p>
-<p>the private plugin hook function should be invoked, with the appropriate arguments, in a single line within the Geth codebase inorder to minimize unexpected conflicts merging upstream Geth into plugeth.</p>
-<div class="section" id="selected-hooks">
-<h2>Selected Hooks<a class="headerlink" href="#selected-hooks" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="selected-plugin-hooks">
+<span id="hooks"></span><h1>Selected Plugin Hooks<a class="headerlink" href="#selected-plugin-hooks" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="plugin-hooks">
+<h2>Plugin Hooks<a class="headerlink" href="#plugin-hooks" title="Permalink to this headline">¶</a></h2>
+<p>Plugeth provides several <a class="reference internal" href="#hooks"><span class="std std-ref">Selected Plugin Hooks</span></a> from which the plugin can capture data from Geth. Additionally in the case of <strong>subcommands</strong> the provided hooks are designed to change the behavior of Geth.</p>
+<p>Hooks are called from functions within the plugin. For example, if we wanted to bring in data from the StateUpdate hook. We would impliment it like so:
+(from <a class="reference external" href="https://github.com/openrelayxyz/plugeth-plugins/tree/master/packages/blockupdates">blockupdates</a>)</p>
+<div class="highlight-Go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">StateUpdate</span><span class="p">(</span><span class="nx">blockRoot</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Hash</span><span class="p">,</span> <span class="nx">parentRoot</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Hash</span><span class="p">,</span> <span class="nx">destructs</span> <span class="kd">map</span><span class="p">[</span><span class="nx">core</span><span class="p">.</span><span class="nx">Hash</span><span class="p">]</span><span class="kd">struct</span><span class="p">{},</span> <span class="nx">accounts</span> <span class="kd">map</span><span class="p">[</span><span class="nx">core</span><span class="p">.</span><span class="nx">Hash</span><span class="p">][]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">storage</span> <span class="kd">map</span><span class="p">[</span><span class="nx">core</span><span class="p">.</span><span class="nx">Hash</span><span class="p">]</span><span class="kd">map</span><span class="p">[</span><span class="nx">core</span><span class="p">.</span><span class="nx">Hash</span><span class="p">][]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">codeUpdates</span> <span class="kd">map</span><span class="p">[</span><span class="nx">core</span><span class="p">.</span><span class="nx">Hash</span><span class="p">][]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">su</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">stateUpdate</span><span class="p">{</span>
+              <span class="nx">Destructs</span><span class="p">:</span> <span class="nx">destructs</span><span class="p">,</span>
+              <span class="nx">Accounts</span><span class="p">:</span> <span class="nx">accounts</span><span class="p">,</span>
+              <span class="nx">Storage</span><span class="p">:</span> <span class="nx">storage</span><span class="p">,</span>
+              <span class="nx">Code</span><span class="p">:</span> <span class="nx">codeUpdates</span><span class="p">,</span>
+      <span class="p">}</span>
+      <span class="nx">cache</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="nx">blockRoot</span><span class="p">,</span> <span class="nx">su</span><span class="p">)</span>
+      <span class="nx">data</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">rlp</span><span class="p">.</span><span class="nx">EncodeToBytes</span><span class="p">(</span><span class="nx">su</span><span class="p">)</span>
+      <span class="nx">backend</span><span class="p">.</span><span class="nx">ChainDb</span><span class="p">().</span><span class="nx">Put</span><span class="p">(</span><span class="nb">append</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;su&quot;</span><span class="p">),</span> <span class="nx">blockRoot</span><span class="p">.</span><span class="nx">Bytes</span><span class="p">()</span><span class="o">...</span><span class="p">),</span> <span class="nx">data</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Many hooks can be deployed in an one plugin as is the case with the <strong>BlockUpdater</strong> plugin.</p>
+</div>
 <div class="section" id="stateupdate">
-<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/core/state/plugin_hooks.go">StateUpdate</a><a class="headerlink" href="#stateupdate" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/core/state/statedb.go#L955">Invocation</a></p>
+<h2>StateUpdate<a class="headerlink" href="#stateupdate" title="Permalink to this headline">¶</a></h2>
+<p><strong>Function Signature</strong>:<code class="docutils literal notranslate"><span class="pre">func(root</span> <span class="pre">common.Hash,</span> <span class="pre">parentRoot</span> <span class="pre">common.Hash,</span> <span class="pre">destructs</span> <span class="pre">map[common.Hash]struct{},</span> <span class="pre">accounts</span> <span class="pre">map[common.Hash][]byte,</span> <span class="pre">storage</span> <span class="pre">map[common.Hash]map[common.Hash][]byte)</span></code></p>
 <p>The state update plugin provides a snapshot of the state subsystem in the form of a a stateUpdate object. The stateUpdate object contains all information transformed by a transaction but not the transaction itself.</p>
 <p>Invoked for each new block, StateUpdate provides the changes to the blockchain state. root corresponds to the state root of the new block. parentRoot corresponds to the state root of the parent block. destructs serves as a set of accounts that self-destructed in this block. accounts maps the hash of each account address to the SlimRLP encoding of the account data. storage maps the hash of each account to a map of that account’s stored data.</p>
 <div class="admonition warning">
@@ -102,25 +130,67 @@
 </div>
 </div>
 <div class="section" id="appendancient">
-<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/core/rawdb/plugin_hooks.go">AppendAncient</a><a class="headerlink" href="#appendancient" title="Permalink to this headline">¶</a></h3>
+<h2>AppendAncient<a class="headerlink" href="#appendancient" title="Permalink to this headline">¶</a></h2>
+<p><strong>Function Signature</strong>:<code class="docutils literal notranslate"><span class="pre">func(number</span> <span class="pre">uint64,</span> <span class="pre">hash,</span> <span class="pre">header,</span> <span class="pre">body,</span> <span class="pre">receipts,</span> <span class="pre">td</span> <span class="pre">[]byte)</span></code></p>
 <p>Invoked when the freezer moves a block from LevelDB to the ancients database. <code class="docutils literal notranslate"><span class="pre">number</span></code> is the number of the block. <code class="docutils literal notranslate"><span class="pre">hash</span></code> is the 32 byte hash of the block as a raw <code class="docutils literal notranslate"><span class="pre">[]byte</span></code>. <code class="docutils literal notranslate"><span class="pre">header</span></code>, <code class="docutils literal notranslate"><span class="pre">body</span></code>, and <code class="docutils literal notranslate"><span class="pre">receipts</span></code> are the RLP encoded versions of their respective block elements. <code class="docutils literal notranslate"><span class="pre">td</span></code> is the byte encoded total difficulty of the block.</p>
 </div>
-<div class="section" id="newhead">
-<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/core/plugin_hooks.go#L108">NewHead</a><a class="headerlink" href="#newhead" title="Permalink to this headline">¶</a></h3>
-<p>Invoked when a new block becomes the canonical latest block. Note that if several blocks are processed in a group (such as during a reorg) this may not be called for each block. You should track the prior latest head if you need to process intermediate blocks.</p>
-</div>
 <div class="section" id="getrpccalls">
-<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth/blob/develop/rpc/plugin_hooks.go">GetRPCCalls</a><a class="headerlink" href="#getrpccalls" title="Permalink to this headline">¶</a></h3>
-<p>Invoked when the RPC handler registers a method call. returns the call <code class="docutils literal notranslate"><span class="pre">id</span></code>, method <code class="docutils literal notranslate"><span class="pre">name</span></code>, and any <code class="docutils literal notranslate"><span class="pre">params</span></code> that may have been passed in.</p>
-<p><strong>I am struggling all of assudden with if this is really this best course of action. Giving all of this reference, seems to beg the -utils vs plugeth conversation and I am not sure that is a smart thing to get into.</strong></p>
+<h2>GetRPCCalls<a class="headerlink" href="#getrpccalls" title="Permalink to this headline">¶</a></h2>
+<p><strong>Function Signature</strong>:<code class="docutils literal notranslate"><span class="pre">func(string,</span> <span class="pre">string,</span> <span class="pre">string)</span></code></p>
+<p>Invoked when the RPC handler registers a method call. Returns the call <code class="docutils literal notranslate"><span class="pre">id</span></code>, method <code class="docutils literal notranslate"><span class="pre">name</span></code>, and any <code class="docutils literal notranslate"><span class="pre">params</span></code> that may have been passed in.</p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>missing a couple of hooks</p>
 </div>
+</div>
+<div class="section" id="preprocessblock">
+<h2>PreProcessBlock<a class="headerlink" href="#preprocessblock" title="Permalink to this headline">¶</a></h2>
+<p><strong>Function Signature</strong>:<code class="docutils literal notranslate"><span class="pre">func(*types.Block)</span></code></p>
+<p>Invoked before the transactions of a block are processed. Returns a block object.</p>
+</div>
+<div class="section" id="preprocesstransaction">
+<h2>PreProcessTransaction<a class="headerlink" href="#preprocesstransaction" title="Permalink to this headline">¶</a></h2>
+<p><strong>Function Signature</strong>:<code class="docutils literal notranslate"><span class="pre">func(*types.Transaction,</span> <span class="pre">*types.Block,</span> <span class="pre">int)</span></code></p>
+<p>Invoked before each individual transaction of a block is processed. Returns a transaction, block, and index number.</p>
+</div>
+<div class="section" id="blockprocessingerror">
+<h2>BlockProcessingError<a class="headerlink" href="#blockprocessingerror" title="Permalink to this headline">¶</a></h2>
+<p><strong>Function Signature</strong>:<code class="docutils literal notranslate"><span class="pre">func(*types.Transaction,</span> <span class="pre">*types.Block,</span> <span class="pre">error)</span></code></p>
+<p>Invoked if an error occurs while processing a transaction. This only applies to errors that would unvalidate the block were this transaction is included not errors such as reverts or opcode errors. Returns a transaction, block, and error.</p>
+</div>
+<div class="section" id="newhead">
+<h2>NewHead<a class="headerlink" href="#newhead" title="Permalink to this headline">¶</a></h2>
+<p><strong>Function Signature</strong>:<code class="docutils literal notranslate"><span class="pre">func(*types.Block,</span> <span class="pre">common.Hash,</span> <span class="pre">[]*types.Log)</span></code></p>
+<p>Invoked when a new block becomes the canonical latest block. Returns a block, hash, and log.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If severtal blocks are processed in a group (such as
+during a reorg) this may not be called for each block. You should track the prior latest head if you need to process intermediate blocks.</p>
+</div>
+</div>
+<div class="section" id="newsideblock">
+<h2>NewSideBlock<a class="headerlink" href="#newsideblock" title="Permalink to this headline">¶</a></h2>
+<p><strong>Function Signature</strong>:<code class="docutils literal notranslate"><span class="pre">func(*types.Block,</span> <span class="pre">common.Hash,</span> <span class="pre">[]*types.Log)</span></code></p>
+<p>Invoked when a block is side-chained. Returns a block, has, and logs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Blocks passed to this method are non-canonical blocks.</p>
+</div>
+</div>
+<div class="section" id="reorg">
+<h2>Reorg<a class="headerlink" href="#reorg" title="Permalink to this headline">¶</a></h2>
+<p><strong>Function Signature</strong>:<code class="docutils literal notranslate"><span class="pre">func(common</span> <span class="pre">*types.Block,</span> <span class="pre">oldChain,</span> <span class="pre">newChain</span> <span class="pre">types.Blocks)</span></code></p>
+<p>Invoked when a chain reorg occurs, that is; at least one block is removed and one block is added. (<code class="docutils literal notranslate"><span class="pre">oldChain</span></code> is a list of removed blocks, <code class="docutils literal notranslate"><span class="pre">newChain</span></code> is a list of newliy added blocks, and <code class="docutils literal notranslate"><span class="pre">common</span></code> is the latest block that is an ancestor to both oldChain and newChain.) Returns a block, a list of old blocks, and a list of new blocks.</p>
 </div>
 </div>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="plugin_loader.html" class="btn btn-neutral float-left" title="Plugin Loader" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hook_writing.html" class="btn btn-neutral float-right" title="Hook Writing Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

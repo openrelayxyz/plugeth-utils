@@ -6,7 +6,7 @@ Build and Deploy
 
 .. contents:: :local:
 
-If you are ready to start building your own plugins go ahead and start `here`_ 
+If you are ready to start building your own plugins go ahead and start here. 
 
 Setting up the environment
 **************************

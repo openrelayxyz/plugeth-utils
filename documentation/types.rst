@@ -4,31 +4,39 @@
 Basic Types of Plugins
 ======================
 
+While PluGeth has been designed to be versatile and customizable, when learning the project it can be helpful to think of plugins as being of four different archetypes. 
+
+.. contents:: :local:
+
 RPC Methods
 -----------
 
-In general these plugins provide new json rpc methods. They will requirre an initialize function that takes a context, loader, and logger as arguments. They will also need a GetAPIs function that takes a node and backend as arguments and returns an API. 
+These plugins provide new json rpc methods to access several objects containing real time and historic data.
 
-.. NOTE:: In order to be made available a flag: ``http.api=<the name of your service>`` will need to be appended to the command line upon starting Geth. 
 
 Subcommand
 ------------
 
-A subcommand redifines the total behavior of Geth and could stand on its own. I contrast with the other plugin types which, in general, are meant to capture and manipulate information, a subcommand is meant to change to overall behavior of Geth. It may do this in order to capture information but the primary fuctionality is a modulation of geth behaviour. 
+A subcommand redifines the total behavior of Geth and could stand on its own. In contrast with the other plugin types which, in general, are meant to capture and manipulate information, a subcommand is meant to change to overall behavior of Geth. It may do this in order to capture information but the primary fuctionality is a modulation of geth behaviour. 
 
 Tracers
 -------
 
-**Tracers vs LiveTracers. 
+Tracers rely on historic data recompiled after execution to give insight into a transaction. 
 
-Tracers rely on historic data whereas LiveTracers run concurent with Geth's verification system. LiveTracers are more generic in that they cannot control the way in which they recieve information. 
+**placeholder for eventual discusion of LiveTracers**
 
 
 Subscriptions
 -------------
 
-A subscription must take a context.context as an argument and return a channel and an error. Subscriptions require a stable connection and return contant information. Subscriptions require a websocket connection and pass a json argument such as: ``{"jsonrpc":"2.0", "id": 0, "method": "namespace_subscribe", "params": ["subscriptionName", $args...]}``
+Subscriptions provide real time notification of data from the EVM as it processes transactions. 
 
-.. NOTE:: Plugins are not limited to a singular functionality and can be customized to operate as hybrids of the above archtypes. 
+.. NOTE:: Plugins are not limited to a singular functionality and can be customized to operate as hybrids of the above. See `blockupdates`_ as an example. 
 
-**todo: this page needs a lot of work**
+.. todo:: Austin: I don't love this page. The informations is too 
+          shallow. 
+
+
+.. _blockupdates: https://github.com/openrelayxyz/plugeth-plugins/tree/master/packages/blockupdates
+

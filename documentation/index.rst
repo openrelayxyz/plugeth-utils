@@ -1,18 +1,14 @@
-.. Plugeth documentation master file, created by
-   sphinx-quickstart on Tue Sep 21 16:08:24 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 =======
 PluGeth
 =======
 
-PluGeth is a fork of the `Go Ethereum Client Geth`_ that implements a plugin architecture, allowing developers to extend Geth's capabilities in a number of different ways using plugins, rather than having to create additional, new forks of Geth. 
+PluGeth is a fork of the Go Ethereum Client, `Geth`_, that implements a plugin architecture allowing developers to extend Geth's capabilities in a number of different ways using plugins rather than having to create additional new forks. 
 
 From Here:
 ----------
 
 - Ready for an  overview of the project and some context? :ref:`project`
-- If your goal is to run existing plugns without sourcecode: :ref:`run`
+- If your goal is to run existing plugns without sourcecode: :ref:`install`
 - If your goal is to build and deploy existing plugins or make custom plugins: :ref:`build`     
 
 .. warning:: Right now PluGeth is in early development. We are 
@@ -36,7 +32,7 @@ Table of Contents
     :maxdepth: 1
     :caption: Tutorials
 
-    run
+    install
     build
     custom
     
@@ -46,10 +42,12 @@ Table of Contents
     :caption: Reference
 
     system_req
-    plugin_loader
-    plugin_hooks
-    core_restricted
+    version
     api
+    plugin_loader
+    hooks
+    hook_writing
+    core_restricted
 
 .. toctree::
     :maxdepth: 1
@@ -58,4 +56,5 @@ Table of Contents
     contact
 
 
-.. _Go Ethereum Client Geth: https://github.com/ethereum/go-ethereum
+
+.. _Geth: https://geth.ethereum.org/

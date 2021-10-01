@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PluGeth Utils &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Install &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -14,7 +14,9 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Build and Deploy" href="build.html" />
+    <link rel="prev" title="Basic Types of Plugins" href="types.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,18 +40,20 @@
 <li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="run.html">Run</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom.html">Building a Custom Plugin</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugin_hooks.html">Plugin Hooks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Version</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Selected Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_writing.html">Hook Writing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contact</span></p>
 <ul>
@@ -70,9 +74,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>PluGeth Utils</li>
+      <li>Install</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/install.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -80,15 +84,30 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="plugeth-utils">
-<span id="utils"></span><h1>PluGeth Utils<a class="headerlink" href="#plugeth-utils" title="Permalink to this headline">¶</a></h1>
-<p><strong>todo: copy on plugeth utils</strong></p>
+  <div class="section" id="install">
+<span id="id1"></span><h1>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h1>
+<p>PluGeth provides a pre-built PluGeth-Geth node as well as pre-built plugins available for download.</p>
+<p>First download the latest PluGeth <a class="reference external" href="https://github.com/openrelayxyz/plugeth/releases">binary release</a>.</p>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>more language about installing download</p>
+</div>
+<p>Our curated list of plugin builds can be found <a class="reference external" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&amp;ab_channel=RickAstley">here</a></p>
+<p>After downloading, move the .so files into the ~/.ethereum/plugins directory.</p>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>Build a binary release so as to provide a usable
+example. Maybe a different example than hello so that there are two generic cases for which there are tutorials.  – or – We should provide examples of the common scenerios in which geth has to be started with flags or connected to with web sockets.</p>
+</div>
 </div>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="types.html" class="btn btn-neutral float-left" title="Basic Types of Plugins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="build.html" class="btn btn-neutral float-right" title="Build and Deploy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
