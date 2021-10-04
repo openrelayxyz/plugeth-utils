@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Building a Custom Plugin &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="RPC Methods" href="RPC_method.html" />
+    <link rel="prev" title="Build and Deploy" href="build.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Plugeth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="project.html">Project Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Building a Custom Plugin</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="RPC_method.html">RPC Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subscription.html">Subscription</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracer.html">Tracer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-implementation">Basic Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#package">Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initialize">Initialize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initializenode">InitializeNode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#specialization">Specialization</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Selected Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_writing.html">Hook Writing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Get in touch with us</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Plugeth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Building a Custom Plugin</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/custom.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="building-a-custom-plugin">
+<span id="custom"></span><h1>Building a Custom Plugin<a class="headerlink" href="#building-a-custom-plugin" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p>Before setting out to build a plugin it will be helpful to be familiar with the <a class="reference internal" href="types.html#types"><span class="std std-ref">Basic Types of Plugins</span></a>. deifferent plugins will require different implimentation.</p>
+<div class="section" id="basic-implementation">
+<h2>Basic Implementation<a class="headerlink" href="#basic-implementation" title="Permalink to this headline">¶</a></h2>
+<p>In general, no matter which type of plugin you intend to build, all will share some common aspects.</p>
+<div class="section" id="package">
+<h3>Package<a class="headerlink" href="#package" title="Permalink to this headline">¶</a></h3>
+<p>Any plugin will need its own package located in the Plugeth-Plugins packages directory. The package will need to include a main.go from which the .so file will be built. The package and main file should share the same name and the name should be a word that describes the basic functionality of the plugin.</p>
+</div>
+<div class="section" id="initialize">
+<h3>Initialize<a class="headerlink" href="#initialize" title="Permalink to this headline">¶</a></h3>
+<p>Most plugins will need to be initialized with an Initialize function. The initialize function will need to be passed at least three arguments: a cli.Context, core.PluginLoader, and a core.Logger.</p>
+<p>And so, all plugins could have an intial template that looks something like this:</p>
+<div class="highlight-Go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+        <span class="s">&quot;github.com/openrelayxyz/plugeth-utils/core&quot;</span>
+        <span class="s">&quot;gopkg.in/urfave/cli.v1&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">log</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Logger</span>
+
+<span class="kd">func</span> <span class="nx">Initialize</span><span class="p">(</span><span class="nx">ctx</span> <span class="o">*</span><span class="nx">cli</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">loader</span> <span class="nx">core</span><span class="p">.</span><span class="nx">PluginLoader</span><span class="p">,</span> <span class="nx">logger</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Logger</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">log</span> <span class="p">=</span> <span class="nx">logger</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">Info</span><span class="p">(</span><span class="s">&quot;loaded New Custom Plugin&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="initializenode">
+<h3>InitializeNode<a class="headerlink" href="#initializenode" title="Permalink to this headline">¶</a></h3>
+<p>Many plugins will make use of the InitializeNode function. Implimentation will look like so:</p>
+<div class="highlight-Go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">InitializeNode</span><span class="p">(</span><span class="nx">stack</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">b</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Backend</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">backend</span> <span class="p">=</span> <span class="nx">b</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">Info</span><span class="p">(</span><span class="s">&quot;Initialized node and backend&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is called as soon as the Geth node is initialized. The core.Node object represents the running node with p2p and RPC capabilities, while the Backend gives you access to blocks and other data you may need to access.</p>
+</div>
+</div>
+<div class="section" id="specialization">
+<h2>Specialization<a class="headerlink" href="#specialization" title="Permalink to this headline">¶</a></h2>
+<p>From this point implimentation becomes more specialized to the particular plugin type. Continue from here for specific instructions for the following plugins:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="RPC_method.html#rpc-method"><span class="std std-ref">RPC Methods</span></a></p></li>
+<li><p><a class="reference internal" href="subscription.html#subscription"><span class="std std-ref">Subscription</span></a></p></li>
+<li><p><a class="reference internal" href="tracer.html#tracer"><span class="std std-ref">Tracer</span></a></p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="build.html" class="btn btn-neutral float-left" title="Build and Deploy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="RPC_method.html" class="btn btn-neutral float-right" title="RPC Methods" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Philip Morlier.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

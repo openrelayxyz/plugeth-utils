@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPC Methods &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Subscription" href="subscription.html" />
+    <link rel="prev" title="Building a Custom Plugin" href="custom.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Plugeth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="project.html">Project Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="custom.html">Building a Custom Plugin</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">RPC Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#getapis">GetAPIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">RPC Method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#access">Access</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="subscription.html">Subscription</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tracer.html">Tracer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom.html#basic-implementation">Basic Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom.html#specialization">Specialization</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Selected Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_writing.html">Hook Writing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">Core vs Restricted packages in Plugeth-utils</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Get in touch with us</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Plugeth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="custom.html">Building a Custom Plugin</a> &raquo;</li>
+      <li>RPC Methods</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/RPC_method.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="rpc-methods">
+<span id="rpc-method"></span><h1>RPC Methods<a class="headerlink" href="#rpc-methods" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="getapis">
+<h2>GetAPIs<a class="headerlink" href="#getapis" title="Permalink to this headline">¶</a></h2>
+<p>For <strong>RPC Methods</strong> a Get APIs method is required in the body of the plugin in order to make the plugin available. The bulk of the implementation will be in the MyService struct. MyService should be a struct which includes two public functions.</p>
+<div class="highlight-Go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">MyService</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">backend</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Backend</span>
+    <span class="nx">stack</span>   <span class="nx">core</span><span class="p">.</span><span class="nx">Node</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">GetAPIs</span><span class="p">(</span><span class="nx">stack</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">backend</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Backend</span><span class="p">)</span> <span class="p">[]</span><span class="nx">core</span><span class="p">.</span><span class="nx">API</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">[]</span><span class="nx">core</span><span class="p">.</span><span class="nx">API</span><span class="p">{</span>
+   <span class="p">{</span>
+      <span class="nx">Namespace</span><span class="p">:</span> <span class="s">&quot;plugeth&quot;</span><span class="p">,</span>
+      <span class="nx">Version</span><span class="p">:</span>   <span class="s">&quot;1.0&quot;</span><span class="p">,</span>
+      <span class="nx">Service</span><span class="p">:</span>   <span class="o">&amp;</span><span class="nx">MyService</span><span class="p">{</span><span class="nx">backend</span><span class="p">,</span> <span class="nx">stack</span><span class="p">},</span>
+      <span class="nx">Public</span><span class="p">:</span>    <span class="kc">true</span><span class="p">,</span>
+   <span class="p">},</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>RPC Method<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>(<strong>accurate heading?</strong>)</p>
+<p>For RPC calls, a function should have a <code class="docutils literal notranslate"><span class="pre">context.Context</span></code> object as the first argument, followed by an arbitrary number of JSON marshallable arguments, and return either a single JSON marshal object, or a JSON marshallable object and an error. The RPC framework will take care of decoding inputs to this function and encoding outputs, and if the error is non-nil it will serve an error response.</p>
+<p>A simple implimentation would look like so:</p>
+<p><strong>eventual link to documentation for hello or some other rpc plugin</strong></p>
+<div class="highlight-Go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="o">*</span><span class="nx">MyService</span><span class="p">)</span> <span class="nx">HelloWorld</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="s">&quot;Hello World&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For plugins such as RPC Methods whcih impliment a
+GetAPIs function, an <strong>Initialize Node</strong> function may not be necesary as the <code class="docutils literal notranslate"><span class="pre">core.Node</span></code> and <code class="docutils literal notranslate"><span class="pre">core.Backend</span></code> will be made available with GetAPIs.</p>
+</div>
+</div>
+<div class="section" id="access">
+<h2>Access<a class="headerlink" href="#access" title="Permalink to this headline">¶</a></h2>
+<p>As with pre-built plugins, a``.so`` will need to be built from``main.go`` and moved into <code class="docutils literal notranslate"><span class="pre">~/.ethereum/plugins</span></code>. Geth will need to be started with with a <code class="docutils literal notranslate"><span class="pre">http.api=mymamespace</span></code> flag. Additionally you will need to include a <code class="docutils literal notranslate"><span class="pre">--http</span></code> flag in order to access the standard json rpc methods.</p>
+<p>The plugin can now be accessed with an rpc call to <code class="docutils literal notranslate"><span class="pre">mynamespace_helloWorld</span></code>.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="custom.html" class="btn btn-neutral float-left" title="Building a Custom Plugin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="subscription.html" class="btn btn-neutral float-right" title="Subscription" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Philip Morlier.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
