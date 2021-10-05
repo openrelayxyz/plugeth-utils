@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basic Types of Plugins &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Install" href="install.html" />
+    <link rel="prev" title="Project Design" href="project.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Plugeth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="project.html">Project Design</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Types of Plugins</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#rpc-methods">RPC Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subcommand">Subcommand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tracers">Tracers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subscriptions">Subscriptions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom.html">Building a Custom Plugin</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Selected Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_writing.html">Hook Writing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">PluGeth-utils Subpackages</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Get in touch with us</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Plugeth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Basic Types of Plugins</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/types.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="basic-types-of-plugins">
+<span id="types"></span><h1>Basic Types of Plugins<a class="headerlink" href="#basic-types-of-plugins" title="Permalink to this headline">¶</a></h1>
+<p>While PluGeth has been designed to be versatile and customizable, when learning the project it can be helpful to think of plugins as being of four different archetypes.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#rpc-methods" id="id2">RPC Methods</a></p></li>
+<li><p><a class="reference internal" href="#subcommand" id="id3">Subcommand</a></p></li>
+<li><p><a class="reference internal" href="#tracers" id="id4">Tracers</a></p></li>
+<li><p><a class="reference internal" href="#subscriptions" id="id5">Subscriptions</a></p></li>
+</ul>
+</div>
+<div class="section" id="rpc-methods">
+<h2><a class="toc-backref" href="#id2">RPC Methods</a><a class="headerlink" href="#rpc-methods" title="Permalink to this headline">¶</a></h2>
+<p>These plugins provide new json rpc methods to access several objects containing real time and historic data.</p>
+</div>
+<div class="section" id="subcommand">
+<h2><a class="toc-backref" href="#id3">Subcommand</a><a class="headerlink" href="#subcommand" title="Permalink to this headline">¶</a></h2>
+<p>A subcommand redifines the total behavior of Geth and could stand on its own. In contrast with the other plugin types which, in general, are meant to capture and manipulate information, a subcommand is meant to change to overall behavior of Geth. It may do this in order to capture information but the primary fuctionality is a modulation of geth behaviour.</p>
+</div>
+<div class="section" id="tracers">
+<h2><a class="toc-backref" href="#id4">Tracers</a><a class="headerlink" href="#tracers" title="Permalink to this headline">¶</a></h2>
+<p>Tracers rely on historic data recompiled after execution to give insight into a transaction.</p>
+<p><strong>placeholder for eventual discusion of LiveTracers</strong></p>
+</div>
+<div class="section" id="subscriptions">
+<h2><a class="toc-backref" href="#id5">Subscriptions</a><a class="headerlink" href="#subscriptions" title="Permalink to this headline">¶</a></h2>
+<p>Subscriptions provide real time notification of data from the EVM as it processes transactions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Plugins are not limited to a singular functionality and can be customized to operate as hybrids of the above. See <a class="reference external" href="https://github.com/openrelayxyz/plugeth-plugins/tree/master/packages/blockupdates">blockupdates</a> as an example.</p>
+</div>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Austin: I don’t love this page. The informations is too
+shallow.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="project.html" class="btn btn-neutral float-left" title="Project Design" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="install.html" class="btn btn-neutral float-right" title="Install" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Philip Morlier.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Design &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Basic Types of Plugins" href="types.html" />
+    <link rel="prev" title="PluGeth" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Plugeth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Project Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#design-goals">Design Goals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#three-repositories">Three Repositories</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plugeth">PluGeth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plugeth-utils">PluGeth-Utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plugeth-plugins">PluGeth-Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependency-scheme">Dependency Scheme</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom.html">Building a Custom Plugin</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Version</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Selected Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_writing.html">Hook Writing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">PluGeth-utils Subpackages</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Get in touch with us</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Plugeth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Project Design</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/project.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="project-design">
+<span id="project"></span><h1>Project Design<a class="headerlink" href="#project-design" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="design-goals">
+<h2>Design Goals<a class="headerlink" href="#design-goals" title="Permalink to this headline">¶</a></h2>
+<p>Upstream Geth exists primarily to serve as a client for the Ethereum mainnet, though it also supports a number of popular testnets. Supporting the Ethereum mainnet is a big enough challenge in its own right that the Geth team generally avoids changes to support other networks, or to provide features only a small handful of users would be interested in.</p>
+<p>The result is that many projects have forked Geth. Some implement their own consensus protocols or alter the behavior of the EVM to support other networks. Others are designed to extract information from the Ethereum mainnet in ways the standard Geth client does not support.</p>
+<p>Creating numerous different forks to fill a variety of different needs comes with a number of drawbacks. Forks tend to drift apart from each other. Many networks that forked from Geth long ago have stopped merging updates; this makes some sense, given that those networks have moved in different directions than Geth and merging upstream changes while properly maintaining consensus rules of an existing network could prove quite challenging. But not merging changes from upstream can mean that security updates are easily missed, especially when the upstream team <a class="reference external" href="https://blog.openrelay.xyz/vulnerability-lifecycle-framework-geth/">obscures security updates as optimizations</a> as a matter of process.</p>
+<p>PluGeth aims to provide a single Geth fork that developers can choose to extend rather than forking the Geth project. Out of the box, PluGeth behaves exactly like upstream Geth, but by installing plugins written in Golang, developers can extend its functionality in a wide variety of ways.</p>
+</div>
+<div class="section" id="three-repositories">
+<h2>Three Repositories<a class="headerlink" href="#three-repositories" title="Permalink to this headline">¶</a></h2>
+<p>PluGeth is an application built in three repositories:</p>
+<div class="section" id="plugeth">
+<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth">PluGeth</a><a class="headerlink" href="#plugeth" title="Permalink to this headline">¶</a></h3>
+<p>The largest of the three Repositories, PluGeth is a fork of Geth which has been modified to enable a plugin architecture. The Plugin loader, wrappers, and hooks all reside in this repository.</p>
+</div>
+<div class="section" id="plugeth-utils">
+<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth-utils">PluGeth-Utils</a><a class="headerlink" href="#plugeth-utils" title="Permalink to this headline">¶</a></h3>
+<p>Utils are small packages used to develop PluGeth plugins without Geth dependencies. For a more detailed analysis of the reasons see :ref: <cite>core_resticted</cite>. Imports from Utils happen automatically and so most users need not clone a local version.</p>
+</div>
+<div class="section" id="plugeth-plugins">
+<h3><a class="reference external" href="https://github.com/openrelayxyz/plugeth-plugins">PluGeth-Plugins</a><a class="headerlink" href="#plugeth-plugins" title="Permalink to this headline">¶</a></h3>
+<p>The packages from which plugins are buile are stored here. This repository contains premade plugins as well as providing a location for storing new custom plugins.</p>
+<div class="section" id="dependency-scheme">
+<h4>Dependency Scheme<a class="headerlink" href="#dependency-scheme" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference internal" href="version.html#version"><span class="std std-ref">Version</span></a></p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="PluGeth" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="types.html" class="btn btn-neutral float-right" title="Basic Types of Plugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Philip Morlier.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

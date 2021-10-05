@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API &mdash; Plugeth Austin Roberts documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Plugin Loader" href="plugin_loader.html" />
+    <link rel="prev" title="Version" href="version.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Plugeth
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="project.html">Project Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="types.html">Basic Types of Plugins</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build and Deploy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom.html">Building a Custom Plugin</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="system_req.html">System Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="version.html">Version</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#anatomy-of-a-plugin">Anatomy of a Plugin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flags">Flags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#subcommands">Subcommands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initialize">Initialize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initializenode">InitializeNode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#getapis">GetAPIs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#injected-apis">Injected APIs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#backend-object">Backend Object</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#downloader">Downloader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#suggestgastipcap">SuggestGasTipCap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extrpcenabled">ExtRPCEnabled</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rpcgascap">RPCGasCap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rpctxfeecap">RPCTxFeeCap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#unprotectedallowed">UnprotectedAllowed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sethead">SetHead</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#headerbynumber">HeaderByNumber</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#headerbyhash">HeaderByHash</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#currentheader">CurrentHeader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#currentblock">CurrentBlock</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blockbynumber">BlockByNumber</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blockbyhash">BlockByHash</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getreceipts">GetReceipts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gettd">GetTd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subscribechainevent">SubscribeChainEvent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subscribechainheadevent">SubscribeChainHeadEvent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subscribechainsideevent">SubscribeChainSideEvent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sendtx">SendTx</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gettransaction">GetTransaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getpooltransaction">GetPoolTransaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getpoolnonce">GetPoolNonce</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stats">Stats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#txpoolcontent">TxPoolContent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subscribenewtxsevent">SubscribeNewTxsEvent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getlogs">GetLogs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subscribelogsevent">SubscribeLogsEvent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subscribependinglogsevent">SubscribePendingLogsEvent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subscriberemovedlogsevent">SubscribeRemovedLogsEvent</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#node-object">Node Object</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#server">Server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#datadir">DataDir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#instancedir">InstanceDir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ipcendpoint">IPCEndpoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#httpendpoint">HTTPEndpoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wsendpoint">WSEndpoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#resolvepath">ResolvePath</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#logger">Logger</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plugin_loader.html">Plugin Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Selected Plugin Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hook_writing.html">Hook Writing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_restricted.html">PluGeth-utils Subpackages</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Get in touch with us</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Plugeth</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>API</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="api">
+<span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="anatomy-of-a-plugin">
+<h2>Anatomy of a Plugin<a class="headerlink" href="#anatomy-of-a-plugin" title="Permalink to this headline">¶</a></h2>
+<p>Plugins for Plugeth use Golang’s <a class="reference external" href="https://pkg.go.dev/plugin">Native Plugin System</a>. Plugin modules must export variables using specific names and types. These will be processed by the plugin loader, and invoked at certain points during Geth’s operations.</p>
+<div class="section" id="flags">
+<h3>Flags<a class="headerlink" href="#flags" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Name:</strong> Flags</p></li>
+<li><p><strong>Type:</strong> <a class="reference external" href="https://pkg.go.dev/flag#FlagSet">flag.FlagSet</a></p></li>
+<li><p><strong>Behavior:</strong> This FlagSet will be parsed and your plugin will be able to access the resulting flags. Flags will be passed to Geth from the command line and are intended to  of the plugin. Note that if any flags are provided, certain checks are disabled within Geth to avoid failing due to unexpected flags.</p></li>
+</ul>
+</div>
+<div class="section" id="subcommands">
+<h3>Subcommands<a class="headerlink" href="#subcommands" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Name:</strong> Subcommands</p></li>
+<li><p><strong>Type:</strong> map[string]func(ctx <a class="reference external" href="https://pkg.go.dev/github.com/urfave/cli#Context">*cli.Context</a>, args []string) error</p></li>
+<li><p><strong>Behavior:</strong> If Geth is invoked with <code class="docutils literal notranslate"><span class="pre">./geth</span> <span class="pre">YOUR_COMMAND</span></code>, the plugin loader will look for <code class="docutils literal notranslate"><span class="pre">YOUR_COMMAND</span></code> within this map, and invoke the corresponding function. This can be useful for certain behaviors like manipulating Geth’s database without having to build a separate binary.</p></li>
+</ul>
+</div>
+<div class="section" id="initialize">
+<h3>Initialize<a class="headerlink" href="#initialize" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Name:</strong> Initialize</p></li>
+<li><p><strong>Type:</strong> func(<a href="#id2"><span class="problematic" id="id3">*</span></a>cli.Context, core.PluginLoader, core.logs )</p></li>
+<li><p><strong>Behavior:</strong> Called as soon as the plugin is loaded, with the cli context and a reference to the plugin loader. This is your plugin’s opportunity to initialize required variables as needed. Note that using the context object you can check arguments, and optionally can manipulate arguments if needed for your plugin.</p></li>
+</ul>
+<div class="admonition-todo admonition" id="id4">
+<p class="admonition-title">Todo</p>
+<p>explain that plugin could provide node.Node with
+restricted.backend</p>
+</div>
+</div>
+<div class="section" id="initializenode">
+<h3>InitializeNode<a class="headerlink" href="#initializenode" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Name:</strong> InitializeNode</p></li>
+<li><p><strong>Type:</strong> func(core.Node, core.Backend)</p></li>
+<li><p><strong>Behavior:</strong> This is called as soon as the Geth node is initialized. The core.Node object represents the running node with p2p and RPC capabilities, while the Backend gives you access to a wide array of data you may need to access.</p></li>
+</ul>
+</div>
+<div class="section" id="getapis">
+<h3>GetAPIs<a class="headerlink" href="#getapis" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Name:</strong> GetAPIs</p></li>
+<li><p><strong>Type:</strong> func(core.Node, core.Backend) []rpc.API</p></li>
+<li><p><strong>Behavior:</strong> This allows you to register new RPC methods to run within Geth.</p></li>
+</ul>
+<p>The GetAPIs function itself will generally be fairly brief, and will looks something like this:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span>  <span class="s">``</span><span class="kd">func</span> <span class="nx">GetAPIs</span><span class="p">(</span><span class="nx">stack</span> <span class="o">*</span><span class="nx">node</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span> <span class="nx">backend</span> <span class="nx">core</span><span class="p">.</span><span class="nx">Backend</span><span class="p">)</span> <span class="p">[]</span><span class="nx">core</span><span class="p">.</span><span class="nx">API</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">[]</span><span class="nx">rpc</span><span class="p">.</span><span class="nx">API</span><span class="p">{</span>
+   <span class="p">{</span>
+     <span class="nx">Namespace</span><span class="p">:</span> <span class="s">&quot;mynamespace&quot;</span><span class="p">,</span>
+     <span class="nx">Version</span><span class="p">:</span>      <span class="s">&quot;1.0&quot;</span><span class="p">,</span>
+     <span class="nx">Service</span><span class="p">:</span>      <span class="o">&amp;</span><span class="nx">MyService</span><span class="p">{</span><span class="nx">backend</span><span class="p">},</span>
+     <span class="nx">Public</span><span class="p">:</span>              <span class="kc">true</span><span class="p">,</span>
+   <span class="p">},</span>
+  <span class="p">}</span>
+<span class="p">}</span><span class="s">``</span>
+</pre></div>
+</div>
+<p>The bulk of the implementation will be in the <code class="docutils literal notranslate"><span class="pre">MyService</span></code> struct. MyService should be a struct with public functions. These functions can have two different types of signatures:</p>
+<ul class="simple">
+<li><p>RPC Calls: For straight RPC calls, a function should have a <code class="docutils literal notranslate"><span class="pre">context.Context</span></code> object as the first argument, followed by an arbitrary number of JSON marshallable arguments, and return either a single JSON marshal object, or a JSON marshallable object and an error. The RPC framework will take care of decoding inputs to this function and encoding outputs, and if the error is non-nil it will serve an error response.</p></li>
+<li><p>Subscriptions: For subscriptions (supported on IPC and websockets), a function should have a <code class="docutils literal notranslate"><span class="pre">context.Context</span></code> object as the first argument followed by an arbitrary number of JSON marshallable arguments, and should return an <code class="docutils literal notranslate"><span class="pre">*rpc.Subscription</span></code> object. The subscription object can be created with <code class="docutils literal notranslate"><span class="pre">rpcSub</span> <span class="pre">:=</span> <span class="pre">notifier.CreateSubscription()</span></code>, and JSON marshallable data can be sent to the subscriber with <code class="docutils literal notranslate"><span class="pre">notifier.Notify(rpcSub.ID,</span> <span class="pre">b)</span></code>.</p></li>
+</ul>
+<p>A very simple MyService might look like:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="s">``</span><span class="kd">type</span> <span class="nx">MyService</span> <span class="kd">struct</span><span class="p">{}</span>
+
+  <span class="kd">func</span> <span class="p">(</span><span class="nx">h</span> <span class="nx">MyService</span><span class="p">)</span> <span class="nx">HelloWorld</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s">&quot;Hello World&quot;</span>
+  <span class="p">}</span><span class="s">``</span>
+</pre></div>
+</div>
+<p>And the client could access this with an rpc call to
+<code class="docutils literal notranslate"><span class="pre">mynamespace_helloworld</span></code></p>
+</div>
+</div>
+<div class="section" id="injected-apis">
+<h2>Injected APIs<a class="headerlink" href="#injected-apis" title="Permalink to this headline">¶</a></h2>
+<p>In addition to hooks that get invoked by Geth, several objects are injected that give you access to additional information.</p>
+<div class="section" id="backend-object">
+<h3>Backend Object<a class="headerlink" href="#backend-object" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">core.Backend</span></code> object is injected by the <code class="docutils literal notranslate"><span class="pre">InitializeNode()</span></code> and <code class="docutils literal notranslate"><span class="pre">GetAPI()</span></code> functions. It offers the following functions:</p>
+<div class="section" id="downloader">
+<h4>Downloader<a class="headerlink" href="#downloader" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">Downloader()</span> <span class="pre">Downloader</span></code></p>
+<p>Returns a Downloader objects, which can provide Syncing status</p>
+</div>
+<div class="section" id="suggestgastipcap">
+<h4>SuggestGasTipCap<a class="headerlink" href="#suggestgastipcap" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SuggestGasTipCap(ctx</span> <span class="pre">context.Context)</span> <span class="pre">(*big.Int,</span> <span class="pre">error)</span></code></p>
+<p>Suggests a Gas tip for the current block.</p>
+</div>
+<div class="section" id="extrpcenabled">
+<h4>ExtRPCEnabled<a class="headerlink" href="#extrpcenabled" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">ExtRPCEnabled()</span> <span class="pre">bool</span></code></p>
+<p>Returns whether RPC external RPC calls are enabled.</p>
+</div>
+<div class="section" id="rpcgascap">
+<h4>RPCGasCap<a class="headerlink" href="#rpcgascap" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">RPCGasCap()</span> <span class="pre">uint64</span></code></p>
+<p>Returns the maximum Gas available to RPC Calls.</p>
+</div>
+<div class="section" id="rpctxfeecap">
+<h4>RPCTxFeeCap<a class="headerlink" href="#rpctxfeecap" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">RPCTxFeeCap()</span> <span class="pre">float64</span></code></p>
+<p>Returns the maximum transaction fee for a transaction submitted via RPC.</p>
+</div>
+<div class="section" id="unprotectedallowed">
+<h4>UnprotectedAllowed<a class="headerlink" href="#unprotectedallowed" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">UnprotectedAllowed()</span> <span class="pre">bool</span></code></p>
+<p>Returns whether or not unprotected transactions can be transmitted through this
+node via RPC.</p>
+</div>
+<div class="section" id="sethead">
+<h4>SetHead<a class="headerlink" href="#sethead" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SetHead(number</span> <span class="pre">uint64)</span></code></p>
+<p>Resets the head to the specified block number.</p>
+</div>
+<div class="section" id="headerbynumber">
+<h4>HeaderByNumber<a class="headerlink" href="#headerbynumber" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">HeaderByNumber(ctx</span> <span class="pre">context.Context,</span> <span class="pre">number</span> <span class="pre">int64)</span> <span class="pre">([]byte,</span> <span class="pre">error)</span></code></p>
+<p>Returns an RLP encoded block header for the specified block number.</p>
+<p>The RLP encoded response can be decoded into a <cite>plugeth-utils/restricted/types.Header</cite> object.</p>
+</div>
+<div class="section" id="headerbyhash">
+<h4>HeaderByHash<a class="headerlink" href="#headerbyhash" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">HeaderByHash(ctx</span> <span class="pre">context.Context,</span> <span class="pre">hash</span> <span class="pre">Hash)</span> <span class="pre">([]byte,</span> <span class="pre">error)</span></code></p>
+<p>Returns an RLP encoded block header for the specified block hash.</p>
+<p>The RLP encoded response can be decoded into a <cite>plugeth-utils/restricted/types.Header</cite> object.</p>
+</div>
+<div class="section" id="currentheader">
+<h4>CurrentHeader<a class="headerlink" href="#currentheader" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">CurrentHeader()</span> <span class="pre">[]byte</span></code></p>
+<p>Returns an RLP encoded block header for the current block.</p>
+<p>The RLP encoded response can be decoded into a <cite>plugeth-utils/restricted/types.Header</cite> object.</p>
+</div>
+<div class="section" id="currentblock">
+<h4>CurrentBlock<a class="headerlink" href="#currentblock" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">CurrentBlock()</span> <span class="pre">[]byte</span></code></p>
+<p>Returns an RLP encoded full block for the current block.</p>
+<p>The RLP encoded response can be decoded into a <cite>plugeth-utils/restricted/types.Block</cite> object.</p>
+</div>
+<div class="section" id="blockbynumber">
+<h4>BlockByNumber<a class="headerlink" href="#blockbynumber" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">BlockByNumber(ctx</span> <span class="pre">context.Context,</span> <span class="pre">number</span> <span class="pre">int64)</span> <span class="pre">([]byte,</span> <span class="pre">error)</span></code></p>
+<p>Returns an RLP encoded full block for the specified block number.</p>
+<p>The RLP encoded response can be decoded into a <cite>plugeth-utils/restricted/types.Block</cite> object.</p>
+</div>
+<div class="section" id="blockbyhash">
+<h4>BlockByHash<a class="headerlink" href="#blockbyhash" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">BlockByHash(ctx</span> <span class="pre">context.Context,</span> <span class="pre">hash</span> <span class="pre">Hash)</span> <span class="pre">([]byte,</span> <span class="pre">error)</span></code></p>
+<p>Returns an RLP encoded full block for the specified block hash.</p>
+<p>The RLP encoded response can be decoded into a <cite>plugeth-utils/restricted/types.Block</cite> object.</p>
+</div>
+<div class="section" id="getreceipts">
+<h4>GetReceipts<a class="headerlink" href="#getreceipts" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">GetReceipts(ctx</span> <span class="pre">context.Context,</span> <span class="pre">hash</span> <span class="pre">Hash)</span> <span class="pre">([]byte,</span> <span class="pre">error)</span></code></p>
+<p>Returns an JSON encoded list of receipts for the specified block hash.</p>
+<p>The JSON encoded response can be decoded into a <cite>plugeth-utils/restricted/types.Receipts</cite> object.</p>
+</div>
+<div class="section" id="gettd">
+<h4>GetTd<a class="headerlink" href="#gettd" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">GetTd(ctx</span> <span class="pre">context.Context,</span> <span class="pre">hash</span> <span class="pre">Hash)</span> <span class="pre">*big.Int</span></code></p>
+<p>Returns the total difficulty for the specified block hash.</p>
+</div>
+<div class="section" id="subscribechainevent">
+<h4>SubscribeChainEvent<a class="headerlink" href="#subscribechainevent" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SubscribeChainEvent(ch</span> <span class="pre">chan&lt;-</span> <span class="pre">ChainEvent)</span> <span class="pre">Subscription</span></code></p>
+<p>Subscribes the provided channel to new chain events.</p>
+</div>
+<div class="section" id="subscribechainheadevent">
+<h4>SubscribeChainHeadEvent<a class="headerlink" href="#subscribechainheadevent" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SubscribeChainHeadEvent(ch</span> <span class="pre">chan&lt;-</span> <span class="pre">ChainHeadEvent)</span> <span class="pre">Subscription</span></code></p>
+<p>Subscribes the provided channel to new chain head events.</p>
+</div>
+<div class="section" id="subscribechainsideevent">
+<h4>SubscribeChainSideEvent<a class="headerlink" href="#subscribechainsideevent" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SubscribeChainSideEvent(ch</span> <span class="pre">chan&lt;-</span> <span class="pre">ChainSideEvent)</span> <span class="pre">Subscription</span></code></p>
+<p>Subscribes the provided channel to new chain side events.</p>
+</div>
+<div class="section" id="sendtx">
+<h4>SendTx<a class="headerlink" href="#sendtx" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SendTx(ctx</span> <span class="pre">context.Context,</span> <span class="pre">signedTx</span> <span class="pre">[]byte)</span> <span class="pre">error</span></code></p>
+<p>Sends an RLP encoded, signed transaction to the network.</p>
+</div>
+<div class="section" id="gettransaction">
+<h4>GetTransaction<a class="headerlink" href="#gettransaction" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">GetTransaction(ctx</span> <span class="pre">context.Context,</span> <span class="pre">txHash</span> <span class="pre">Hash)</span> <span class="pre">([]byte,</span> <span class="pre">Hash,</span> <span class="pre">uint64,</span> <span class="pre">uint64,</span> <span class="pre">error)</span></code></p>
+<p>Returns an RLP encoded transaction at the specified hash, along with the hash and number of the included block, and the transaction’s position within that block.</p>
+<div class="section" id="getpooltransactions">
+<h5>GetPoolTransactions<a class="headerlink" href="#getpooltransactions" title="Permalink to this headline">¶</a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">GetPoolTransactions()</span> <span class="pre">([][]byte,</span> <span class="pre">error)</span></code></p>
+<p>Returns a list of RLP encoded transactions found in the mempool</p>
+</div>
+</div>
+<div class="section" id="getpooltransaction">
+<h4>GetPoolTransaction<a class="headerlink" href="#getpooltransaction" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">GetPoolTransaction(txHash</span> <span class="pre">Hash)</span> <span class="pre">[]byte</span></code></p>
+<p>Returns the RLP encoded transaction from the mempool at the specified hash.</p>
+</div>
+<div class="section" id="getpoolnonce">
+<h4>GetPoolNonce<a class="headerlink" href="#getpoolnonce" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">GetPoolNonce(ctx</span> <span class="pre">context.Context,</span> <span class="pre">addr</span> <span class="pre">Address)</span> <span class="pre">(uint64,</span> <span class="pre">error)</span></code></p>
+<p>Returns the nonce of the last transaction for a given address, including
+transactions found in the mempool.</p>
+</div>
+<div class="section" id="stats">
+<h4>Stats<a class="headerlink" href="#stats" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">Stats()</span> <span class="pre">(pending</span> <span class="pre">int,</span> <span class="pre">queued</span> <span class="pre">int)</span></code></p>
+<p>Returns the number of pending and queued transactions in the mempool.</p>
+</div>
+<div class="section" id="txpoolcontent">
+<h4>TxPoolContent<a class="headerlink" href="#txpoolcontent" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">TxPoolContent()</span> <span class="pre">(map[Address][][]byte,</span> <span class="pre">map[Address][][]byte)</span></code></p>
+<p>Returns a map of addresses to the list of RLP encoded transactions pending in
+the mempool, and queued in the mempool.</p>
+</div>
+<div class="section" id="subscribenewtxsevent">
+<h4>SubscribeNewTxsEvent<a class="headerlink" href="#subscribenewtxsevent" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SubscribeNewTxsEvent(chan&lt;-</span> <span class="pre">NewTxsEvent)</span> <span class="pre">Subscription</span></code></p>
+<p>Subscribe to a feed of new transactions added to the mempool.</p>
+</div>
+<div class="section" id="getlogs">
+<h4>GetLogs<a class="headerlink" href="#getlogs" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">GetLogs(ctx</span> <span class="pre">context.Context,</span> <span class="pre">blockHash</span> <span class="pre">Hash)</span> <span class="pre">([][]byte,</span> <span class="pre">error)</span></code></p>
+<p>Returns a list of RLP encoded logs found in the specified block.</p>
+</div>
+<div class="section" id="subscribelogsevent">
+<h4>SubscribeLogsEvent<a class="headerlink" href="#subscribelogsevent" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SubscribeLogsEvent(ch</span> <span class="pre">chan&lt;-</span> <span class="pre">[][]byte)</span> <span class="pre">Subscription</span></code></p>
+<p>Subscribe to logs included in a confirmed block.</p>
+</div>
+<div class="section" id="subscribependinglogsevent">
+<h4>SubscribePendingLogsEvent<a class="headerlink" href="#subscribependinglogsevent" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SubscribePendingLogsEvent(ch</span> <span class="pre">chan&lt;-</span> <span class="pre">[][]byte)</span> <span class="pre">Subscription</span></code></p>
+<p>Subscribe to logs from pending transactions.</p>
+</div>
+<div class="section" id="subscriberemovedlogsevent">
+<h4>SubscribeRemovedLogsEvent<a class="headerlink" href="#subscriberemovedlogsevent" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">SubscribeRemovedLogsEvent(ch</span> <span class="pre">chan&lt;-</span> <span class="pre">[]byte)</span> <span class="pre">Subscription</span></code></p>
+<p>Subscribe to logs removed from the canonical chain in reorged blocks.</p>
+</div>
+</div>
+<div class="section" id="node-object">
+<h3>Node Object<a class="headerlink" href="#node-object" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">core.Node</span></code> object is injected by the <code class="docutils literal notranslate"><span class="pre">InitializeNode()</span></code> and <code class="docutils literal notranslate"><span class="pre">GetAPI()</span></code> functions. It offers the following functions:</p>
+<div class="section" id="server">
+<h4>Server<a class="headerlink" href="#server" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">Server()</span> <span class="pre">Server</span></code></p>
+<p>The Server object provides access to <code class="docutils literal notranslate"><span class="pre">server.PeerCount()</span></code>, the number of peers connected to the node.</p>
+</div>
+<div class="section" id="datadir">
+<h4>DataDir<a class="headerlink" href="#datadir" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">DataDir()</span> <span class="pre">string</span></code></p>
+<p>Returns the Ethereuem datadir.</p>
+</div>
+<div class="section" id="instancedir">
+<h4>InstanceDir<a class="headerlink" href="#instancedir" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">InstanceDir()</span> <span class="pre">string</span></code></p>
+<p>Returns the instancedir used by the protocol stack.</p>
+</div>
+<div class="section" id="ipcendpoint">
+<h4>IPCEndpoint<a class="headerlink" href="#ipcendpoint" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">IPCEndpoint()</span> <span class="pre">string</span></code></p>
+<p>The path of the IPC Endpoint for this node.</p>
+</div>
+<div class="section" id="httpendpoint">
+<h4>HTTPEndpoint<a class="headerlink" href="#httpendpoint" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">HTTPEndpoint()</span> <span class="pre">string</span></code></p>
+<p>The url of the HTTP Endpoint for this node.</p>
+</div>
+<div class="section" id="wsendpoint">
+<h4>WSEndpoint<a class="headerlink" href="#wsendpoint" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">WSEndpoint()</span> <span class="pre">string</span></code></p>
+<p>The url of the websockets Endpoint for this node.</p>
+</div>
+<div class="section" id="resolvepath">
+<h4>ResolvePath<a class="headerlink" href="#resolvepath" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">ResolvePath(x</span> <span class="pre">string)</span> <span class="pre">string</span></code></p>
+<p>Resolves a path within the DataDir.</p>
+</div>
+</div>
+<div class="section" id="logger">
+<h3>Logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h3>
+<p>The Logger object is injected by the <code class="docutils literal notranslate"><span class="pre">Initialize()</span></code> function. It implements
+logging based on the interfaces of <a class="reference external" href="https://github.com/inconshreveable/log15">Log15</a>.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="version.html" class="btn btn-neutral float-left" title="Version" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plugin_loader.html" class="btn btn-neutral float-right" title="Plugin Loader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Philip Morlier.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
