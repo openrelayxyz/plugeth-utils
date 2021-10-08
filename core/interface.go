@@ -141,6 +141,11 @@ type Node interface {
 	HTTPEndpoint() string
 	WSEndpoint() string
 	ResolvePath(x string) string
+	Attach() (Client, error)
+}
+
+type Client interface {
+	Call(interface{}, string, ...interface{}) error
 }
 
 type Server interface {
@@ -160,7 +165,6 @@ type PluginLoader interface {
 	Lookup(name string, validate func(interface{}) bool) []interface{}
 	GetFeed() Feed
 }
-
 
 type Subscription interface {
 	Err() <-chan error // returns the error channel
