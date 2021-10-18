@@ -21,24 +21,24 @@ Three Repositories
 PluGeth is an application built in three repositories:
 
 `PluGeth`_
-**********
+----------
 
 The largest of the three Repositories, PluGeth is a fork of Geth which has been modified to enable a plugin architecture. The Plugin loader, wrappers, and hooks all reside in this repository. 
 
 `PluGeth-Utils`_
-****************
+----------------
 
-Utils are small packages used to develop PluGeth plugins without Geth dependencies. For a more detailed analysis of the reasons see :ref: `core_resticted`. Imports from Utils happen automatically and so most users need not clone a local version. 
+Utils are small packages used to develop PluGeth plugins without Geth dependencies. For a more detailed analysis of the reasons see :ref:`core_restricted`. Imports from Utils happen automatically and so most users need not clone a local version. 
 
 `PluGeth-Plugins`_
-******************
+------------------
 
 The packages from which plugins are buile are stored here. This repository contains premade plugins as well as providing a location for storing new custom plugins. 
 
-Dependency Scheme
------------------
+Version Control 
+*****************
 
-:ref:`version` 
+In order to ensure that the the project can compile and is up to date see: :ref:`version`; to be familiar with dependencies and requirements.  
 
 
 

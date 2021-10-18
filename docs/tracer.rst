@@ -47,6 +47,10 @@ Finally a series of functions which points to the MyService struct and corespond
    }
    func (b *MyBasicTracerService) CaptureEnd(output []byte, gasUsed uint64, t time.Duration, err error) {
    } 
+   func (b *MyBasicTracerService) CaptureEnter(typ core.OpCode, from core.Address, to core.Address, input []byte, gas uint64, value *big.Int) {
+   }
+   func (b *MyBasicTracerService) CaptureExit(output []byte, gasUsed uint64, err error) {
+   }
    func (b *MyBasicTracerService) Result() (interface{}, error) { return "hello world", nil }
 
 Access

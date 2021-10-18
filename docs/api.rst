@@ -30,15 +30,14 @@ Initialize
 * **Type:** func(*cli.Context, core.PluginLoader, core.logs )
 * **Behavior:** Called as soon as the plugin is loaded, with the cli context and a reference to the plugin loader. This is your plugin's opportunity to initialize required variables as needed. Note that using the context object you can check arguments, and optionally can manipulate arguments if needed for your plugin. 
 
-.. todo:: explain that plugin could provide node.Node with 
-          restricted.backend
-
 InitializeNode
 --------------
 
 * **Name:** InitializeNode
 * **Type:** func(core.Node, core.Backend)
 * **Behavior:** This is called as soon as the Geth node is initialized. The core.Node object represents the running node with p2p and RPC capabilities, while the Backend gives you access to a wide array of data you may need to access.
+
+.. note:: If a particular plugin requires access to the node.Node object it can be obtained using the restricted package located in `PluGeth-Utils`_.
 
 GetAPIs
 -------
@@ -354,7 +353,7 @@ logging based on the interfaces of `Log15 <https://github.com/inconshreveable/lo
 
 
 
-
+.. _PluGeth-Utils: https://github.com/openrelayxyz/plugeth-utils
 .. _*cli.Context: https://pkg.go.dev/github.com/urfave/cli#Context
 .. _flag.FlagSet: https://pkg.go.dev/flag#FlagSet
 .. _Native Plugin System: https://pkg.go.dev/plugin

@@ -7,7 +7,7 @@ Selected Plugin Hooks
 Plugin Hooks
 ************
 
-Plugeth provides several :ref:`hooks` from which the plugin can capture data from Geth. Additionally in the case of **subcommands** the provided hooks are designed to change the behavior of Geth.  
+Plugeth provides several hooks from which the plugin can capture data from Geth. Additionally in the case of **subcommands** the provided hooks are designed to change the behavior of Geth.  
 
 Hooks are called from functions within the plugin. For example, if we wanted to bring in data from the StateUpdate hook. We would impliment it like so:
 (from `blockupdates`_)

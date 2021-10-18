@@ -24,24 +24,12 @@ Tracers
 
 Tracers rely on historic data recompiled after execution to give insight into a transaction.
 
-**placeholder for eventual discusion of LiveTracers**
-
-
 Subscriptions
 -------------
 
 Subscriptions provide real time notification of data from the EVM as it processes transactions.
 
 .. NOTE:: Plugins are not limited to a singular functionality and can be customized to operate as hybrids of the above. See `blockupdates`_ as an example.
-
-.. todo:: Austin: I don't love this page. The informations is too
-          shallow.
-
-          Reply: I'd be inclined to add links out to the tutorial page for each
-          of the types. I think it's useful to have brief descriptions of each
-          type in one place, but putting each of the tutorials all on one page
-          is a bit much. It might also be a good idea to link to real plugins
-          that exemplify each type, though we won't have one of each type yet.
 
 
 .. _blockupdates: https://github.com/openrelayxyz/plugeth-plugins/tree/master/packages/blockupdates
