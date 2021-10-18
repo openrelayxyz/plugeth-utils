@@ -26,4 +26,4 @@ After downloading, move the .so files into the ~/.ethereum/plugins directory.
 
 
 .. _binary release: https://github.com/openrelayxyz/plugeth/releases
-.. _here: https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley
+.. _here: https://github.com/openrelayxyz/plugeth-plugins/releases
