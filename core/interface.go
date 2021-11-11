@@ -61,6 +61,15 @@ type Backend interface {
 
 type OpCode byte
 
+type BlockTracer interface {
+	TracerResult
+	PreProcessBlock(hash Hash, number uint64, encoded []byte)
+	PreProcessTransaction(tx Hash, block Hash, i int)
+	BlockProcessingError(tx Hash, block Hash, err error)
+	PostProcessTransaction(tx Hash, block Hash, i int, receipt []byte)
+	PostProcessBlock(block Hash)
+}
+
 type TracerResult interface {
 	CaptureStart(from Address, to Address, create bool, input []byte, gas uint64, value *big.Int)
 	CaptureState(pc uint64, op OpCode, gas, cost uint64, scope ScopeContext, rData []byte, depth int, err error)
