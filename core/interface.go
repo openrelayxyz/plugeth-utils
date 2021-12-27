@@ -142,6 +142,18 @@ type Progress interface {
 	HighestBlock() uint64
 	PulledStates() uint64
 	KnownStates() uint64
+	SyncedAccounts() uint64
+	SyncedAccountBytes() uint64
+	SyncedBytecodes() uint64
+	SyncedBytecodeBytes() uint64
+	SyncedStorage() uint64
+	SyncedStorageBytes() uint64
+	HealedTrienodes() uint64
+	HealedTrienodeBytes() uint64
+	HealedBytecodes() uint64
+	HealedBytecodeBytes() uint64
+	HealingTrienodes() uint64
+	HealingBytecode() uint64
 }
 
 type Node interface {
