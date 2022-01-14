@@ -130,6 +130,8 @@ type Contract interface {
 	Caller() Address
 	Address() Address
 	Value() *big.Int
+	Input() []byte
+	Code() []byte
 }
 
 type Downloader interface {
