@@ -200,3 +200,12 @@ type Feed interface {
 	Send(interface{}) int
 	Subscribe(channel interface{}) Subscription
 }
+
+type BlockContext struct {
+	Coinbase    Address
+	GasLimit    uint64
+	BlockNumber *big.Int
+	Time        *big.Int
+	Difficulty  *big.Int
+	BaseFee     *big.Int
+}
