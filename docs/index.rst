@@ -43,6 +43,7 @@ Table of Contents
     :maxdepth: 1
     :caption: Reference
 
+    existing
     system_req
     version
     api

@@ -11,6 +11,9 @@ While PluGeth has been designed to be versatile and customizable, when learning 
 RPC Methods
 -----------
 
+this is a big ole test
+
+
 These plugins provide new json rpc methods to access several objects containing real time and historic data.
 
 
