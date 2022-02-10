@@ -1,9 +1,9 @@
 .. _custom:
 
 
-========================
-Building a Custom Plugin
-========================
+=======================
+Writing a Custom Plugin
+=======================
 
 .. toctree::
     :hidden:
@@ -13,24 +13,24 @@ Building a Custom Plugin
     tracer
 
 
-Before setting out to build a plugin it will be helpful to be familiar with the :ref:`types`. deifferent plugins will require different implimentation.
+Before setting out to build a plugin it will be helpful to be familiar with the :ref:`types`. Different plugins will require different implementation.
 
 Basic Implementation
 ====================
 
-In general, no matter which type of plugin you intend to build, all will share some common aspects. 
+All plugins will share some common aspects. 
 
 Package
 -------
 
-Any plugin will need its own package located in the Plugeth-Plugins packages directory. The package will need to include a main.go from which the .so file will be built. The package and main file should share the same name and the name should be a word that describes the basic functionality of the plugin. 
+Any plugin will need its own package located in ``plugeth-plugins/packages``. The package will need to include a ``main.go`` from which the ``.so`` file will be built. The package and main file should share the same name and the name should be a word that describes the basic functionality of the plugin. 
 
 Initialize
 ----------
 
-Most plugins will need to be initialized with an Initialize function. The initialize function will need to be passed at least three arguments: a cli.Context, core.PluginLoader, and a core.Logger.  
+Most plugins will need to be initialized with a ``func Initialize``. The initialize function will need to be passed at least three arguments: ``cli.Context``, ``core.PluginLoader``, ``core.Logger``.  
 
-And so, all plugins could have an intial template that looks something like this: 
+All plugins could have an intial template that looks something like this: 
 
 .. code-block:: Go
 
@@ -51,7 +51,7 @@ And so, all plugins could have an intial template that looks something like this
 InitializeNode
 --------------
 
-Many plugins will make use of the InitializeNode function. Implimentation will look like so:
+Many plugins will make use of ``func InitializeNode``.
 
 .. code-block:: Go
 
@@ -61,7 +61,7 @@ Many plugins will make use of the InitializeNode function. Implimentation will l
    }
 
 
-This is called as soon as the Geth node is initialized. The core.Node object represents the running node with p2p and RPC capabilities, while the Backend gives you access to blocks and other data you may need to access.    
+``InitializeNode`` is called as soon as the Geth node is initialized. The ``core.Node`` object represents the running node with P2P and RPC capabilities, while the ``core.Backend`` gives you access to blocks and other data you may need to access.    
 
 Specialization
 ==============
@@ -71,6 +71,8 @@ From this point implimentation becomes more specialized to the particular plugin
 * :ref:`RPC_method`
 * :ref:`subscription`
 * :ref:`tracer`
+
+
 
 
 

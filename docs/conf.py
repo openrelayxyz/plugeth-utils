@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Plugeth'
-copyright = '2021, Philip Morlier'
+copyright = '2021, Austin Roberts, Sam Johnston, Philip Morlier'
 author = 'Philip Morlier, Austin Roberts'
 
 # The full version, including alpha/beta/rc tags
