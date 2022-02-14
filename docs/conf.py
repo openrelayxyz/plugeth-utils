@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Plugeth'
-copyright = '2021, Philip Morlier'
+copyright = '2021, Austin Roberts, Sam Johnston, Philip Morlier'
 author = 'Philip Morlier, Austin Roberts'
 
 # The full version, including alpha/beta/rc tags
@@ -63,3 +63,4 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+master_doc = 'index'

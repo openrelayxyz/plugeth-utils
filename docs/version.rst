@@ -1,8 +1,8 @@
 .. _version:
 
-=======
-Version
-=======
+===============
+Version Control
+===============
 
 PluGeth is separated into three packages in order to minimize dependency conflicts. Golang plugins cannot include different versions of the same packages as the program loading the plugin. If plugins had to import packages from PluGeth itself, a plugin build could only be loaded by that same version of PluGeth. By separating out the PluGeth-utils package, both PluGeth and the plugins must rely on the same version of PluGeth-utils, but plugins can be compatible with any version of PluGeth compiled with the same version of PluGeth-utils.
 
