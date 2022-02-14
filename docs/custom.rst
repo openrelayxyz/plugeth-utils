@@ -13,7 +13,7 @@ Writing a Custom Plugin
     tracer
 
 
-Before setting out to build a plugin it will be helpful to be familiar with the :ref:`types`. Different plugins will require different implementation.
+Before setting out to write a plugin it will be helpful to be familiar with the :ref:`types`. Different plugins will require different implementation.
 
 Basic Implementation
 ====================
