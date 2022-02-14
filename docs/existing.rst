@@ -61,7 +61,7 @@ Blocktracer is an subscription plugin written such that for each block mined, bl
 Usage
 =====
 
-As with any websocket an itial connection will need to be established. 
+As with any websocket an initial connection will need to be established. 
 
 
 Here we are using wscat to connect to local host port 8556.

@@ -46,7 +46,7 @@ For the sake of this tutorial we will be building the Hello plugin. Navigate to 
 
    $ go build -buildmode=plugin
 
-This will compile the plugin and produce a ``hello.so`` file. Move ``hello.so`` into ``~/.ethereum/plugins`` . In order to use this plugin geth will need to be started with a ``http.api=mymamespace`` flag. Additionally you will need to include a ``--http`` flag in order to access the standard json rpc methods. 
+This will compile the plugin and produce a ``hello.so`` file. Move ``hello.so`` into ``~/.ethereum/plugins`` . In order to use this plugin geth will need to be started with a ``http.api=mynamespace`` flag. Additionally you will need to include a ``--http`` flag in order to access the standard json rpc methods. 
 
 .. note:: The above location may change when changing ``--datadir``.
 
