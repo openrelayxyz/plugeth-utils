@@ -80,6 +80,10 @@ type TracerResult interface {
 	Result() (interface{}, error)
 }
 
+type PreTracer interface {
+	CapturePreStart(from Address, to *Address, input []byte, gas uint64, value *big.Int)
+}
+
 type StateDB interface {
 	GetBalance(Address) *big.Int
 
