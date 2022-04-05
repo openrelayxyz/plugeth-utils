@@ -3,7 +3,7 @@ module github.com/openrelayxyz/plugeth-utils
 go 1.16
 
 require (
-	github.com/btcsuite/btcd v0.20.1-beta
+	github.com/btcsuite/btcd/btcec/v2 v2.1.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/google/gofuzz v1.1.1-0.20200604201612-c04b05f3adfa
 	github.com/holiman/uint256 v1.2.0
