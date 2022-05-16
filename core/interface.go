@@ -171,6 +171,7 @@ type Node interface {
 	WSEndpoint() string
 	ResolvePath(x string) string
 	Attach() (Client, error)
+	Close() error
 }
 
 type Client interface {
