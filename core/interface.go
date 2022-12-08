@@ -214,3 +214,11 @@ type BlockContext struct {
 	Difficulty  *big.Int
 	BaseFee     *big.Int
 }
+
+type Context interface {
+	Set(string, string) error
+
+	String(string) string
+
+	Bool(string) bool
+}
