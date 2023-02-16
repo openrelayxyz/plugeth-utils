@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 	"math/big"
-	"time"
 
 	"github.com/holiman/uint256"
 )
@@ -74,7 +73,7 @@ type TracerResult interface {
 	CaptureStart(from Address, to Address, create bool, input []byte, gas uint64, value *big.Int)
 	CaptureState(pc uint64, op OpCode, gas, cost uint64, scope ScopeContext, rData []byte, depth int, err error)
 	CaptureFault(pc uint64, op OpCode, gas, cost uint64, scope ScopeContext, depth int, err error)
-	CaptureEnd(output []byte, gasUsed uint64, t time.Duration, err error)
+	CaptureEnd(output []byte, gasUsed uint64, err error)
 	CaptureEnter(typ OpCode, from Address, to Address, input []byte, gas uint64, value *big.Int)
 	CaptureExit(output []byte, gasUsed uint64, err error)
 	Result() (interface{}, error)
@@ -210,7 +209,7 @@ type BlockContext struct {
 	Coinbase    Address
 	GasLimit    uint64
 	BlockNumber *big.Int
-	Time        *big.Int
+	Time        uint64
 	Difficulty  *big.Int
 	BaseFee     *big.Int
 }
