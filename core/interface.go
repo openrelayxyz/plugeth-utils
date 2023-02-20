@@ -212,7 +212,7 @@ type BlockContext struct {
 	Coinbase    Address
 	GasLimit    uint64
 	BlockNumber *big.Int
-	Time        uint64
+	Time        *big.Int
 	Difficulty  *big.Int
 	BaseFee     *big.Int
 }
