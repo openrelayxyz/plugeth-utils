@@ -70,6 +70,8 @@ type BlockTracer interface {
 	PostProcessBlock(block Hash)
 }
 
+// The implementation of CaptureEnd below diverges from foundation Geth, we pass dummy variables in PluGeth
+// in order to preserve the implementation of the tracing plugins in Plugeth-Plugins.
 type TracerResult interface {
 	CaptureStart(from Address, to Address, create bool, input []byte, gas uint64, value *big.Int)
 	CaptureState(pc uint64, op OpCode, gas, cost uint64, scope ScopeContext, rData []byte, depth int, err error)
