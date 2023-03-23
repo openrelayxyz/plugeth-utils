@@ -113,6 +113,10 @@ type StateDB interface {
 	SlotInAccessList(addr Address, slot Hash) (addressOk bool, slotOk bool)
 }
 
+type RWStateDB interface {
+	StateDB
+}
+
 type ScopeContext interface {
 	Memory() Memory
 	Stack() Stack
