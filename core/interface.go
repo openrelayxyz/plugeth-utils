@@ -111,6 +111,8 @@ type StateDB interface {
 
 	AddressInAccessList(addr Address) bool
 	SlotInAccessList(addr Address, slot Hash) (addressOk bool, slotOk bool)
+
+	IntermediateRoot(deleteEmptyObjects bool) Hash
 }
 
 type RWStateDB interface {
