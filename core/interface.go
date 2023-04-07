@@ -55,6 +55,9 @@ type Backend interface {
 	SubscribePendingLogsEvent(ch chan<- [][]byte) Subscription     // RLP Encoded logs
 	SubscribeRemovedLogsEvent(ch chan<- []byte) Subscription       // RLP encoded logs
 
+	GetTrie(hash Hash) (Trie, error)
+	GetAccountTrie(stateRoot Hash, account Address) (Trie, error)
+
 	// ChainConfig() *params.ChainConfig
 	// Engine() consensus.Engine
 }
