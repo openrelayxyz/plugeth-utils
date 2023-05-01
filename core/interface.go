@@ -55,6 +55,9 @@ type Backend interface {
 	SubscribePendingLogsEvent(ch chan<- [][]byte) Subscription     // RLP Encoded logs
 	SubscribeRemovedLogsEvent(ch chan<- []byte) Subscription       // RLP encoded logs
 
+	GetTrie(hash Hash) (Trie, error)
+	GetAccountTrie(stateRoot Hash, account Address) (Trie, error)
+
 	// ChainConfig() *params.ChainConfig
 	// Engine() consensus.Engine
 }
@@ -219,8 +222,43 @@ type BlockContext struct {
 
 type Context interface {
 	Set(string, string) error
-
 	String(string) string
-
 	Bool(string) bool
+}
+
+type Trie interface {
+	GetKey([]byte) []byte
+	TryGet(key []byte) ([]byte, error)
+	TryGetAccount(address Address) (*StateAccount, error)
+	Hash() Hash
+	NodeIterator(startKey []byte) NodeIterator
+	Prove(key []byte, fromLevel uint, proofDb KeyValueWriter) error
+}
+
+type StateAccount struct {
+	Nonce    uint64
+	Balance  *big.Int
+	Root     Hash // merkle root of the storage trie
+	CodeHash []byte
+}
+
+type NodeIterator interface {
+	Next(bool) bool
+	Error() error
+	Hash() Hash
+	Parent() Hash
+	Path() []byte
+	NodeBlob() []byte
+	Leaf() bool
+	LeafKey() []byte
+	LeafBlob() []byte
+	LeafProof() [][]byte
+	AddResolver(NodeResolver)
+}
+
+type NodeResolver func(owner Hash, path []byte, hash Hash) []byte
+
+type KeyValueWriter interface {
+	Put(key []byte, value []byte) error
+	Delete(key []byte) error
 }
