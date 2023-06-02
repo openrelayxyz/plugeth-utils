@@ -25,8 +25,8 @@ import (
 	"unsafe"
 
 	"github.com/openrelayxyz/plugeth-utils/core"
-	"github.com/openrelayxyz/plugeth-utils/restricted/hexutil"
 	"github.com/openrelayxyz/plugeth-utils/restricted/crypto"
+	"github.com/openrelayxyz/plugeth-utils/restricted/hexutil"
 	"github.com/openrelayxyz/plugeth-utils/restricted/params"
 	"github.com/openrelayxyz/plugeth-utils/restricted/rlp"
 )
@@ -63,13 +63,13 @@ type Receipt struct {
 	// They are stored in the chain database.
 	TxHash          core.Hash    `json:"transactionHash" gencodec:"required"`
 	ContractAddress core.Address `json:"contractAddress"`
-	GasUsed         uint64         `json:"gasUsed" gencodec:"required"`
+	GasUsed         uint64       `json:"gasUsed" gencodec:"required"`
 
 	// Inclusion information: These fields provide information about the inclusion of the
 	// transaction corresponding to this receipt.
 	BlockHash        core.Hash `json:"blockHash,omitempty"`
-	BlockNumber      *big.Int    `json:"blockNumber,omitempty"`
-	TransactionIndex uint        `json:"transactionIndex"`
+	BlockNumber      *big.Int  `json:"blockNumber,omitempty"`
+	TransactionIndex uint      `json:"transactionIndex"`
 }
 
 type receiptMarshaling struct {
@@ -123,11 +123,27 @@ func (r *Receipt) EncodeRLP(w io.Writer) error {
 	buf := encodeBufferPool.Get().(*bytes.Buffer)
 	defer encodeBufferPool.Put(buf)
 	buf.Reset()
-	buf.WriteByte(r.Type)
-	if err := rlp.Encode(buf, data); err != nil {
+	if err := r.encodeTyped(data, buf); err != nil {
 		return err
 	}
 	return rlp.Encode(w, buf.Bytes())
+}
+
+// encodeTyped writes the canonical encoding of a typed receipt to w.
+func (r *Receipt) encodeTyped(data *receiptRLP, w *bytes.Buffer) error {
+	w.WriteByte(r.Type)
+	return rlp.Encode(w, data)
+}
+
+// MarshalBinary returns the consensus encoding of the receipt.
+func (r *Receipt) MarshalBinary() ([]byte, error) {
+	if r.Type == LegacyTxType {
+		return rlp.EncodeToBytes(r)
+	}
+	data := &receiptRLP{r.statusEncoding(), r.CumulativeGasUsed, r.Bloom, r.Logs}
+	var buf bytes.Buffer
+	err := r.encodeTyped(data, &buf)
+	return buf.Bytes(), err
 }
 
 // DecodeRLP implements rlp.Decoder, and loads the consensus fields of a receipt
@@ -165,6 +181,42 @@ func (r *Receipt) DecodeRLP(s *rlp.Stream) error {
 		return ErrTxTypeNotSupported
 	default:
 		return rlp.ErrExpectedList
+	}
+}
+
+// UnmarshalBinary decodes the consensus encoding of receipts.
+// It supports legacy RLP receipts and EIP-2718 typed receipts.
+func (r *Receipt) UnmarshalBinary(b []byte) error {
+	if len(b) > 0 && b[0] > 0x7f {
+		// It's a legacy receipt decode the RLP
+		var data receiptRLP
+		err := rlp.DecodeBytes(b, &data)
+		if err != nil {
+			return err
+		}
+		r.Type = LegacyTxType
+		return r.setFromRLP(data)
+	}
+	// It's an EIP2718 typed transaction envelope.
+	return r.decodeTyped(b)
+}
+
+// decodeTyped decodes a typed receipt from the canonical format.
+func (r *Receipt) decodeTyped(b []byte) error {
+	if len(b) <= 1 {
+		return errEmptyTypedReceipt
+	}
+	switch b[0] {
+	case DynamicFeeTxType, AccessListTxType:
+		var data receiptRLP
+		err := rlp.DecodeBytes(b[1:], &data)
+		if err != nil {
+			return err
+		}
+		r.Type = b[0]
+		return r.setFromRLP(data)
+	default:
+		return ErrTxTypeNotSupported
 	}
 }
 
