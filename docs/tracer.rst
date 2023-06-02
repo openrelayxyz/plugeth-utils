@@ -22,7 +22,7 @@ First an empty MyService Struct.
 Map
 ***
    
-Next, a map of tracers to functions returning a ``core.TracerResult`` which will be implimented like so:
+Next, a map of tracers to functions returning a ``core.TracerResult`` which will be implemented like so:
 
 .. code-block:: Go
    

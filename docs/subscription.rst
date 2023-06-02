@@ -32,7 +32,7 @@ A GetAPIs method is required in the body of the plugin in order to make the plug
 Subscription Function
 *********************
 
-For subscriptions (supported on IPC and websockets), a function should take MyService as a reciever and a context.Context object as an argument and return a channel and an error. The following is a subscription function that impliments a timer. 
+For subscriptions (supported on IPC and websockets), a function should take MyService as a reciever and a context.Context object as an argument and return a channel and an error. The following is a subscription function that implements a timer. 
 
 .. code-block:: Go
 
@@ -64,7 +64,7 @@ Access
 .. Note:: Plugins providing subscriptions can be accessed via IPC 
           and websockets. In the below example we will be using `wscat`_ to connect a websocket to a local Geth node.
 
-As with pre-built plugins, a ``.so`` will need to be built from ``main.go`` and moved into ``~/.ethereum/plugins``. Geth will need to be started with with ``--ws --ws.api=mynamespace``flags. Additionally you will need to include a ``--http`` flag in order to access the standard json rpc methods.
+As with pre-built plugins, a ``.so`` will need to be built from ``main.go`` and moved into ``~/.ethereum/plugins``. Geth will need to be started with ``--ws --ws.api=mynamespace`` flags. Additionally you will need to include a ``--http`` flag in order to access the standard json rpc methods.
 
 After starting Geth, from a seperate terminal run:
 

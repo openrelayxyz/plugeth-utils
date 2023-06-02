@@ -31,7 +31,7 @@ GetFeed
 =======
 ``GetFeed() Feed``
 
-Returns a new feed that the plugin can used for publish/subscribe models.
+Returns a new feed that the plugin can use for publish/subscribe models.
 
 For example:
 
