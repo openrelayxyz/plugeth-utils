@@ -1,4 +1,4 @@
-// Copyright 2020 The go-ethereum Authors
+// Copyright 2021 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ import (
 	"github.com/openrelayxyz/plugeth-utils/core"
 )
 
-//go:generate gencodec -type AccessTuple -out gen_access_tuple.go
+//go:generate go run github.com/fjl/gencodec -type AccessTuple -out gen_access_tuple.go
 
 // AccessList is an EIP-2930 access list.
 type AccessList []AccessTuple
@@ -44,22 +44,22 @@ func (al AccessList) StorageKeys() int {
 
 // AccessListTx is the data of EIP-2930 access list transactions.
 type AccessListTx struct {
-	ChainID    *big.Int        // destination chain ID
-	Nonce      uint64          // nonce of sender account
-	GasPrice   *big.Int        // wei per gas
-	Gas        uint64          // gas limit
+	ChainID    *big.Int      // destination chain ID
+	Nonce      uint64        // nonce of sender account
+	GasPrice   *big.Int      // wei per gas
+	Gas        uint64        // gas limit
 	To         *core.Address `rlp:"nil"` // nil means contract creation
-	Value      *big.Int        // wei amount
-	Data       []byte          // contract invocation input data
-	AccessList AccessList      // EIP-2930 access list
-	V, R, S    *big.Int        // signature values
+	Value      *big.Int      // wei amount
+	Data       []byte        // contract invocation input data
+	AccessList AccessList    // EIP-2930 access list
+	V, R, S    *big.Int      // signature values
 }
 
 // copy creates a deep copy of the transaction data and initializes all fields.
 func (tx *AccessListTx) copy() TxData {
 	cpy := &AccessListTx{
 		Nonce: tx.Nonce,
-		To:    tx.To, // TODO: copy pointed-to address
+		To:    copyAddressPtr(tx.To),
 		Data:  core.CopyBytes(tx.Data),
 		Gas:   tx.Gas,
 		// These are copied below.
@@ -96,7 +96,6 @@ func (tx *AccessListTx) copy() TxData {
 // accessors for innerTx.
 func (tx *AccessListTx) txType() byte           { return AccessListTxType }
 func (tx *AccessListTx) chainID() *big.Int      { return tx.ChainID }
-func (tx *AccessListTx) protected() bool        { return true }
 func (tx *AccessListTx) accessList() AccessList { return tx.AccessList }
 func (tx *AccessListTx) data() []byte           { return tx.Data }
 func (tx *AccessListTx) gas() uint64            { return tx.Gas }
@@ -105,7 +104,11 @@ func (tx *AccessListTx) gasTipCap() *big.Int    { return tx.GasPrice }
 func (tx *AccessListTx) gasFeeCap() *big.Int    { return tx.GasPrice }
 func (tx *AccessListTx) value() *big.Int        { return tx.Value }
 func (tx *AccessListTx) nonce() uint64          { return tx.Nonce }
-func (tx *AccessListTx) to() *core.Address    { return tx.To }
+func (tx *AccessListTx) to() *core.Address      { return tx.To }
+
+func (tx *AccessListTx) effectiveGasPrice(dst *big.Int, baseFee *big.Int) *big.Int {
+	return dst.Set(tx.GasPrice)
+}
 
 func (tx *AccessListTx) rawSignatureValues() (v, r, s *big.Int) {
 	return tx.V, tx.R, tx.S

@@ -31,7 +31,7 @@ import (
 	"github.com/openrelayxyz/plugeth-utils/restricted/rlp"
 )
 
-//go:generate gencodec -type Receipt -field-override receiptMarshaling -out gen_receipt_json.go
+//go:generate go run github.com/fjl/gencodec -type Receipt -field-override receiptMarshaling -out gen_receipt_json.go
 
 var (
 	receiptStatusFailedRLP     = []byte{}
@@ -60,10 +60,10 @@ type Receipt struct {
 	Logs              []*Log `json:"logs"              gencodec:"required"`
 
 	// Implementation fields: These fields are added by geth when processing a transaction.
-	// They are stored in the chain database.
-	TxHash          core.Hash    `json:"transactionHash" gencodec:"required"`
-	ContractAddress core.Address `json:"contractAddress"`
-	GasUsed         uint64       `json:"gasUsed" gencodec:"required"`
+	TxHash            core.Hash    `json:"transactionHash" gencodec:"required"`
+	ContractAddress   core.Address `json:"contractAddress"`
+	GasUsed           uint64       `json:"gasUsed" gencodec:"required"`
+	EffectiveGasPrice *big.Int     `json:"effectiveGasPrice"`
 
 	// Inclusion information: These fields provide information about the inclusion of the
 	// transaction corresponding to this receipt.
@@ -115,6 +115,9 @@ func NewReceipt(root []byte, failed bool, cumulativeGasUsed uint64) *Receipt {
 
 // EncodeRLP implements rlp.Encoder, and flattens the consensus fields of a receipt
 // into an RLP stream. If no post state is present, byzantium fork is assumed.
+// For a legacy Receipt this returns RLP([PostStateOrStatus, CumulativeGasUsed, Bloom, Logs])
+// For a EIP-2718 Receipt this returns RLP(TxType || ReceiptPayload)
+// For a EIP-2930 Receipt, TxType == 0x01 and ReceiptPayload == RLP([PostStateOrStatus, CumulativeGasUsed, Bloom, Logs])
 func (r *Receipt) EncodeRLP(w io.Writer) error {
 	data := &receiptRLP{r.statusEncoding(), r.CumulativeGasUsed, r.Bloom, r.Logs}
 	if r.Type == LegacyTxType {
@@ -161,26 +164,13 @@ func (r *Receipt) DecodeRLP(s *rlp.Stream) error {
 		}
 		r.Type = LegacyTxType
 		return r.setFromRLP(dec)
-	case kind == rlp.String:
+	default:
 		// It's an EIP-2718 typed tx receipt.
 		b, err := s.Bytes()
 		if err != nil {
 			return err
 		}
-		if len(b) == 0 {
-			return errEmptyTypedReceipt
-		}
-		r.Type = b[0]
-		if r.Type == AccessListTxType || r.Type == DynamicFeeTxType {
-			var dec receiptRLP
-			if err := rlp.DecodeBytes(b[1:], &dec); err != nil {
-				return err
-			}
-			return r.setFromRLP(dec)
-		}
-		return ErrTxTypeNotSupported
-	default:
-		return rlp.ErrExpectedList
+		return r.decodeTyped(b)
 	}
 }
 
@@ -260,8 +250,8 @@ func (r *Receipt) Size() float64 {
 	return size
 }
 
-// ReceiptForStorage is a wrapper around a Receipt that flattens and parses the
-// entire content of a receipt, as opposed to only the consensus fields originally.
+// ReceiptForStorage is a wrapper around a Receipt with RLP serialization
+// that omits the Bloom field and deserialization that re-computes it.
 type ReceiptForStorage Receipt
 
 // EncodeRLP implements rlp.Encoder.
@@ -274,7 +264,8 @@ func (r *ReceiptForStorage) EncodeRLP(w io.Writer) error {
 	return rlp.Encode(w, enc)
 }
 
-// DecodeRLP implements rlp.Decoder.
+// DecodeRLP implements rlp.Decoder, and loads both consensus and implementation
+// fields of a receipt from an RLP stream.
 func (r *ReceiptForStorage) DecodeRLP(s *rlp.Stream) error {
 	var stored storedReceiptRLP
 	if err := s.Decode(&stored); err != nil {
@@ -286,6 +277,7 @@ func (r *ReceiptForStorage) DecodeRLP(s *rlp.Stream) error {
 	r.CumulativeGasUsed = stored.CumulativeGasUsed
 	r.Logs = stored.Logs
 	r.Bloom = CreateBloom(Receipts{(*Receipt)(r)})
+
 	return nil
 }
 
@@ -317,42 +309,48 @@ func (rs Receipts) EncodeIndex(i int, w *bytes.Buffer) {
 
 // DeriveFields fills the receipts with their computed fields based on consensus
 // data and contextual infos like containing block and transactions.
-func (r Receipts) DeriveFields(config *params.ChainConfig, hash core.Hash, number uint64, txs Transactions) error {
+func (rs Receipts) DeriveFields(config *params.ChainConfig, hash core.Hash, number uint64, baseFee *big.Int, txs []*Transaction) error {
 	signer := MakeSigner(config, new(big.Int).SetUint64(number))
 
 	logIndex := uint(0)
-	if len(txs) != len(r) {
+	if len(txs) != len(rs) {
 		return errors.New("transaction and receipt count mismatch")
 	}
-	for i := 0; i < len(r); i++ {
+	for i := 0; i < len(rs); i++ {
 		// The transaction type and hash can be retrieved from the transaction itself
-		r[i].Type = txs[i].Type()
-		r[i].TxHash = txs[i].Hash()
+		rs[i].Type = txs[i].Type()
+		rs[i].TxHash = txs[i].Hash()
+
+		rs[i].EffectiveGasPrice = txs[i].inner.effectiveGasPrice(new(big.Int), baseFee)
 
 		// block location fields
-		r[i].BlockHash = hash
-		r[i].BlockNumber = new(big.Int).SetUint64(number)
-		r[i].TransactionIndex = uint(i)
+		rs[i].BlockHash = hash
+		rs[i].BlockNumber = new(big.Int).SetUint64(number)
+		rs[i].TransactionIndex = uint(i)
 
 		// The contract address can be derived from the transaction itself
 		if txs[i].To() == nil {
 			// Deriving the signer is expensive, only do if it's actually needed
 			from, _ := Sender(signer, txs[i])
-			r[i].ContractAddress = crypto.CreateAddress(from, txs[i].Nonce())
+			rs[i].ContractAddress = crypto.CreateAddress(from, txs[i].Nonce())
+		} else {
+			rs[i].ContractAddress = core.Address{}
 		}
+
 		// The used gas can be calculated based on previous r
 		if i == 0 {
-			r[i].GasUsed = r[i].CumulativeGasUsed
+			rs[i].GasUsed = rs[i].CumulativeGasUsed
 		} else {
-			r[i].GasUsed = r[i].CumulativeGasUsed - r[i-1].CumulativeGasUsed
+			rs[i].GasUsed = rs[i].CumulativeGasUsed - rs[i-1].CumulativeGasUsed
 		}
+
 		// The derived log fields can simply be set from the block and transaction
-		for j := 0; j < len(r[i].Logs); j++ {
-			r[i].Logs[j].BlockNumber = number
-			r[i].Logs[j].BlockHash = hash
-			r[i].Logs[j].TxHash = r[i].TxHash
-			r[i].Logs[j].TxIndex = uint(i)
-			r[i].Logs[j].Index = logIndex
+		for j := 0; j < len(rs[i].Logs); j++ {
+			rs[i].Logs[j].BlockNumber = number
+			rs[i].Logs[j].BlockHash = hash
+			rs[i].Logs[j].TxHash = rs[i].TxHash
+			rs[i].Logs[j].TxIndex = uint(i)
+			rs[i].Logs[j].Index = logIndex
 			logIndex++
 		}
 	}
