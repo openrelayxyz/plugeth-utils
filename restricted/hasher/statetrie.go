@@ -17,11 +17,11 @@
 package hasher
 
 import (
-	"fmt"
 	"bufio"
 	"bytes"
 	"encoding/gob"
 	"errors"
+	"fmt"
 	"io"
 	"sync"
 
@@ -57,7 +57,7 @@ func returnToPool(st *StackTrie) {
 // in order. Once it determines that a subtree will no longer be inserted
 // into, it will hash it and free up the memory it uses.
 type StackTrie struct {
-	owner    core.Hash    // the owner of the trie
+	owner    core.Hash      // the owner of the trie
 	nodeType uint8          // node type (as in branch, ext, leaf)
 	val      []byte         // value contained by this node if it's a leaf
 	key      []byte         // key chunk covered by this (leaf|ext) node
@@ -214,7 +214,7 @@ func (st *StackTrie) TryUpdate(key, value []byte) error {
 
 func (st *StackTrie) Update(key, value []byte) {
 	if err := st.TryUpdate(key, value); err != nil {
-		fmt.Errorf("Unhandled trie error in StackTrie.Update", "err", err)
+		fmt.Println("Unhandled trie error in StackTrie.Update:", err)
 	}
 }
 
