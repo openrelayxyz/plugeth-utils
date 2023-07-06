@@ -39,6 +39,14 @@ var (
 	errEmptyTypedTx         = errors.New("empty typed transaction bytes")
 )
 
+var (
+	txTypeRegistry = map[byte]func([]byte) (TxData, error){}
+)
+
+func RegisterTxType(id byte, fn func([]byte) (TxData, error)) {
+	txTypeRegistry[id] = fn
+}
+
 // Transaction types.
 const (
 	LegacyTxType = iota
@@ -191,6 +199,9 @@ func (tx *Transaction) decodeTyped(b []byte) (TxData, error) {
 		err := rlp.DecodeBytes(b[1:], &inner)
 		return &inner, err
 	default:
+		if fn, ok := txTypeRegistry[b[0]]; ok {
+			return fn(b[1:])
+		}
 		return nil, ErrTxTypeNotSupported
 	}
 }
