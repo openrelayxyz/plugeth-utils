@@ -63,13 +63,13 @@ var (
 	)
 
 	emptyEip2718Tx = NewTx(&AccessListTx{
-		ChainID:  big.NewInt(1),
-		Nonce:    3,
-		To:       &testAddr,
-		Value:    big.NewInt(10),
-		Gas:      25000,
-		GasPrice: big.NewInt(1),
-		Data:     fromHex("5544"),
+		ChainIDv:  big.NewInt(1),
+		Noncev:    3,
+		Tov:       &testAddr,
+		Valuev:    big.NewInt(10),
+		Gasv:      25000,
+		GasPricev: big.NewInt(1),
+		Datav:     fromHex("5544"),
 	})
 
 	signedEip2718Tx, _ = emptyEip2718Tx.WithSignature(
@@ -126,9 +126,9 @@ func TestEIP2930Signer(t *testing.T) {
 		keyAddr = crypto.PubkeyToAddress(key.PublicKey)
 		signer1 = NewEIP2930Signer(big.NewInt(1))
 		signer2 = NewEIP2930Signer(big.NewInt(2))
-		tx0     = NewTx(&AccessListTx{Nonce: 1})
-		tx1     = NewTx(&AccessListTx{ChainID: big.NewInt(1), Nonce: 1})
-		tx2, _  = SignNewTx(key, signer2, &AccessListTx{ChainID: big.NewInt(2), Nonce: 1})
+		tx0     = NewTx(&AccessListTx{Noncev: 1})
+		tx1     = NewTx(&AccessListTx{ChainIDv: big.NewInt(1), Noncev: 1})
+		tx2, _  = SignNewTx(key, signer2, &AccessListTx{ChainIDv: big.NewInt(2), Noncev: 1})
 	)
 
 	tests := []struct {
@@ -297,22 +297,22 @@ func testTransactionPriceNonceSort(t *testing.T, baseFee *big.Int) {
 			gasFeeCap := rand.Intn(50)
 			if baseFee == nil {
 				tx = NewTx(&LegacyTx{
-					Nonce:    uint64(start + i),
-					To:       &core.Address{},
-					Value:    big.NewInt(100),
-					Gas:      100,
-					GasPrice: big.NewInt(int64(gasFeeCap)),
-					Data:     nil,
+					Noncev:    uint64(start + i),
+					Tov:       &core.Address{},
+					Valuev:    big.NewInt(100),
+					Gasv:      100,
+					GasPricev: big.NewInt(int64(gasFeeCap)),
+					Datav:     nil,
 				})
 			} else {
 				tx = NewTx(&DynamicFeeTx{
-					Nonce:     uint64(start + i),
-					To:        &core.Address{},
-					Value:     big.NewInt(100),
-					Gas:       100,
-					GasFeeCap: big.NewInt(int64(gasFeeCap)),
-					GasTipCap: big.NewInt(int64(rand.Intn(gasFeeCap + 1))),
-					Data:      nil,
+					Noncev:     uint64(start + i),
+					Tov:        &core.Address{},
+					Valuev:     big.NewInt(100),
+					Gasv:       100,
+					GasFeeCapv: big.NewInt(int64(gasFeeCap)),
+					GasTipCapv: big.NewInt(int64(rand.Intn(gasFeeCap + 1))),
+					Datav:      nil,
 				})
 				if count == 25 && int64(gasFeeCap) < baseFee.Int64() {
 					count = i
@@ -429,49 +429,49 @@ func TestTransactionCoding(t *testing.T) {
 		case 0:
 			// Legacy tx.
 			txdata = &LegacyTx{
-				Nonce:    i,
-				To:       &recipient,
-				Gas:      1,
-				GasPrice: big.NewInt(2),
-				Data:     []byte("abcdef"),
+				Noncev:    i,
+				Tov:       &recipient,
+				Gasv:      1,
+				GasPricev: big.NewInt(2),
+				Datav:     []byte("abcdef"),
 			}
 		case 1:
 			// Legacy tx contract creation.
 			txdata = &LegacyTx{
-				Nonce:    i,
-				Gas:      1,
-				GasPrice: big.NewInt(2),
-				Data:     []byte("abcdef"),
+				Noncev:    i,
+				Gasv:      1,
+				GasPricev: big.NewInt(2),
+				Datav:     []byte("abcdef"),
 			}
 		case 2:
 			// Tx with non-zero access list.
 			txdata = &AccessListTx{
-				ChainID:    big.NewInt(1),
-				Nonce:      i,
-				To:         &recipient,
-				Gas:        123457,
-				GasPrice:   big.NewInt(10),
-				AccessList: accesses,
-				Data:       []byte("abcdef"),
+				ChainIDv:    big.NewInt(1),
+				Noncev:      i,
+				Tov:         &recipient,
+				Gasv:        123457,
+				GasPricev:   big.NewInt(10),
+				AccessListv: accesses,
+				Datav:       []byte("abcdef"),
 			}
 		case 3:
 			// Tx with empty access list.
 			txdata = &AccessListTx{
-				ChainID:  big.NewInt(1),
-				Nonce:    i,
-				To:       &recipient,
-				Gas:      123457,
-				GasPrice: big.NewInt(10),
-				Data:     []byte("abcdef"),
+				ChainIDv:  big.NewInt(1),
+				Noncev:    i,
+				Tov:       &recipient,
+				Gasv:      123457,
+				GasPricev: big.NewInt(10),
+				Datav:     []byte("abcdef"),
 			}
 		case 4:
 			// Contract creation with access list.
 			txdata = &AccessListTx{
-				ChainID:    big.NewInt(1),
-				Nonce:      i,
-				Gas:        123457,
-				GasPrice:   big.NewInt(10),
-				AccessList: accesses,
+				ChainIDv:    big.NewInt(1),
+				Noncev:      i,
+				Gasv:        123457,
+				GasPricev:   big.NewInt(10),
+				AccessListv: accesses,
 			}
 		}
 		tx, err := SignNewTx(key, signer, txdata)

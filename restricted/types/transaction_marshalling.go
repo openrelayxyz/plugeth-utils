@@ -60,40 +60,58 @@ func (t *Transaction) MarshalJSON() ([]byte, error) {
 	// Other fields are set conditionally depending on tx type.
 	switch tx := t.inner.(type) {
 	case *LegacyTx:
-		enc.Nonce = (*hexutil.Uint64)(&tx.Nonce)
-		enc.Gas = (*hexutil.Uint64)(&tx.Gas)
-		enc.GasPrice = (*hexutil.Big)(tx.GasPrice)
-		enc.Value = (*hexutil.Big)(tx.Value)
-		enc.Data = (*hexutil.Bytes)(&tx.Data)
+		enc.Nonce = (*hexutil.Uint64)(&tx.Noncev)
+		enc.Gas = (*hexutil.Uint64)(&tx.Gasv)
+		enc.GasPrice = (*hexutil.Big)(tx.GasPricev)
+		enc.Value = (*hexutil.Big)(tx.Valuev)
+		enc.Data = (*hexutil.Bytes)(&tx.Datav)
 		enc.To = t.To()
 		enc.V = (*hexutil.Big)(tx.V)
 		enc.R = (*hexutil.Big)(tx.R)
 		enc.S = (*hexutil.Big)(tx.S)
 	case *AccessListTx:
-		enc.ChainID = (*hexutil.Big)(tx.ChainID)
-		enc.AccessList = &tx.AccessList
-		enc.Nonce = (*hexutil.Uint64)(&tx.Nonce)
-		enc.Gas = (*hexutil.Uint64)(&tx.Gas)
-		enc.GasPrice = (*hexutil.Big)(tx.GasPrice)
-		enc.Value = (*hexutil.Big)(tx.Value)
-		enc.Data = (*hexutil.Bytes)(&tx.Data)
+		enc.ChainID = (*hexutil.Big)(tx.ChainIDv)
+		enc.AccessList = &tx.AccessListv
+		enc.Nonce = (*hexutil.Uint64)(&tx.Noncev)
+		enc.Gas = (*hexutil.Uint64)(&tx.Gasv)
+		enc.GasPrice = (*hexutil.Big)(tx.GasPricev)
+		enc.Value = (*hexutil.Big)(tx.Valuev)
+		enc.Data = (*hexutil.Bytes)(&tx.Datav)
 		enc.To = t.To()
 		enc.V = (*hexutil.Big)(tx.V)
 		enc.R = (*hexutil.Big)(tx.R)
 		enc.S = (*hexutil.Big)(tx.S)
 	case *DynamicFeeTx:
-		enc.ChainID = (*hexutil.Big)(tx.ChainID)
-		enc.AccessList = &tx.AccessList
-		enc.Nonce = (*hexutil.Uint64)(&tx.Nonce)
-		enc.Gas = (*hexutil.Uint64)(&tx.Gas)
-		enc.MaxFeePerGas = (*hexutil.Big)(tx.GasFeeCap)
-		enc.MaxPriorityFeePerGas = (*hexutil.Big)(tx.GasTipCap)
-		enc.Value = (*hexutil.Big)(tx.Value)
-		enc.Data = (*hexutil.Bytes)(&tx.Data)
+		enc.ChainID = (*hexutil.Big)(tx.ChainIDv)
+		enc.AccessList = &tx.AccessListv
+		enc.Nonce = (*hexutil.Uint64)(&tx.Noncev)
+		enc.Gas = (*hexutil.Uint64)(&tx.Gasv)
+		enc.MaxFeePerGas = (*hexutil.Big)(tx.GasFeeCapv)
+		enc.MaxPriorityFeePerGas = (*hexutil.Big)(tx.GasTipCapv)
+		enc.Value = (*hexutil.Big)(tx.Valuev)
+		enc.Data = (*hexutil.Bytes)(&tx.Datav)
 		enc.To = t.To()
 		enc.V = (*hexutil.Big)(tx.V)
 		enc.R = (*hexutil.Big)(tx.R)
 		enc.S = (*hexutil.Big)(tx.S)
+	default:
+		enc.ChainID = (*hexutil.Big)(tx.ChainID())
+		al := tx.AccessList()
+		enc.AccessList = &al
+		nonce := tx.Nonce()
+		enc.Nonce = (*hexutil.Uint64)(&nonce)
+		gas := tx.Gas()
+		enc.Gas = (*hexutil.Uint64)(&gas)
+		enc.MaxFeePerGas = (*hexutil.Big)(tx.GasFeeCap())
+		enc.MaxPriorityFeePerGas = (*hexutil.Big)(tx.GasTipCap())
+		enc.Value = (*hexutil.Big)(tx.Value())
+		data := tx.Data()
+		enc.Data = (*hexutil.Bytes)(&data)
+		enc.To = t.To()
+		v, r, s := tx.RawSignatureValues()
+		enc.V = (*hexutil.Big)(v)
+		enc.R = (*hexutil.Big)(r)
+		enc.S = (*hexutil.Big)(s)
 	}
 	return json.Marshal(&enc)
 }
@@ -112,28 +130,28 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		var itx LegacyTx
 		inner = &itx
 		if dec.To != nil {
-			itx.To = dec.To
+			itx.Tov = dec.To
 		}
 		if dec.Nonce == nil {
 			return errors.New("missing required field 'nonce' in transaction")
 		}
-		itx.Nonce = uint64(*dec.Nonce)
+		itx.Noncev = uint64(*dec.Nonce)
 		if dec.GasPrice == nil {
 			return errors.New("missing required field 'gasPrice' in transaction")
 		}
-		itx.GasPrice = (*big.Int)(dec.GasPrice)
+		itx.GasPricev = (*big.Int)(dec.GasPrice)
 		if dec.Gas == nil {
 			return errors.New("missing required field 'gas' in transaction")
 		}
-		itx.Gas = uint64(*dec.Gas)
+		itx.Gasv = uint64(*dec.Gas)
 		if dec.Value == nil {
 			return errors.New("missing required field 'value' in transaction")
 		}
-		itx.Value = (*big.Int)(dec.Value)
+		itx.Valuev = (*big.Int)(dec.Value)
 		if dec.Data == nil {
 			return errors.New("missing required field 'input' in transaction")
 		}
-		itx.Data = *dec.Data
+		itx.Datav = *dec.Data
 		if dec.V == nil {
 			return errors.New("missing required field 'v' in transaction")
 		}
@@ -158,35 +176,35 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		inner = &itx
 		// Access list is optional for now.
 		if dec.AccessList != nil {
-			itx.AccessList = *dec.AccessList
+			itx.AccessListv	 = *dec.AccessList
 		}
 		if dec.ChainID == nil {
 			return errors.New("missing required field 'chainId' in transaction")
 		}
-		itx.ChainID = (*big.Int)(dec.ChainID)
+		itx.ChainIDv = (*big.Int)(dec.ChainID)
 		if dec.To != nil {
-			itx.To = dec.To
+			itx.Tov = dec.To
 		}
 		if dec.Nonce == nil {
 			return errors.New("missing required field 'nonce' in transaction")
 		}
-		itx.Nonce = uint64(*dec.Nonce)
+		itx.Noncev = uint64(*dec.Nonce)
 		if dec.GasPrice == nil {
 			return errors.New("missing required field 'gasPrice' in transaction")
 		}
-		itx.GasPrice = (*big.Int)(dec.GasPrice)
+		itx.GasPricev = (*big.Int)(dec.GasPrice)
 		if dec.Gas == nil {
 			return errors.New("missing required field 'gas' in transaction")
 		}
-		itx.Gas = uint64(*dec.Gas)
+		itx.Gasv = uint64(*dec.Gas)
 		if dec.Value == nil {
 			return errors.New("missing required field 'value' in transaction")
 		}
-		itx.Value = (*big.Int)(dec.Value)
+		itx.Valuev = (*big.Int)(dec.Value)
 		if dec.Data == nil {
 			return errors.New("missing required field 'input' in transaction")
 		}
-		itx.Data = *dec.Data
+		itx.Datav = *dec.Data
 		if dec.V == nil {
 			return errors.New("missing required field 'v' in transaction")
 		}
@@ -211,39 +229,39 @@ func (t *Transaction) UnmarshalJSON(input []byte) error {
 		inner = &itx
 		// Access list is optional for now.
 		if dec.AccessList != nil {
-			itx.AccessList = *dec.AccessList
+			itx.AccessListv = *dec.AccessList
 		}
 		if dec.ChainID == nil {
 			return errors.New("missing required field 'chainId' in transaction")
 		}
-		itx.ChainID = (*big.Int)(dec.ChainID)
+		itx.ChainIDv = (*big.Int)(dec.ChainID)
 		if dec.To != nil {
-			itx.To = dec.To
+			itx.Tov = dec.To
 		}
 		if dec.Nonce == nil {
 			return errors.New("missing required field 'nonce' in transaction")
 		}
-		itx.Nonce = uint64(*dec.Nonce)
+		itx.Noncev = uint64(*dec.Nonce)
 		if dec.MaxPriorityFeePerGas == nil {
 			return errors.New("missing required field 'maxPriorityFeePerGas' for txdata")
 		}
-		itx.GasTipCap = (*big.Int)(dec.MaxPriorityFeePerGas)
+		itx.GasTipCapv = (*big.Int)(dec.MaxPriorityFeePerGas)
 		if dec.MaxFeePerGas == nil {
 			return errors.New("missing required field 'maxFeePerGas' for txdata")
 		}
-		itx.GasFeeCap = (*big.Int)(dec.MaxFeePerGas)
+		itx.GasFeeCapv = (*big.Int)(dec.MaxFeePerGas)
 		if dec.Gas == nil {
 			return errors.New("missing required field 'gas' for txdata")
 		}
-		itx.Gas = uint64(*dec.Gas)
+		itx.Gasv = uint64(*dec.Gas)
 		if dec.Value == nil {
 			return errors.New("missing required field 'value' in transaction")
 		}
-		itx.Value = (*big.Int)(dec.Value)
+		itx.Valuev = (*big.Int)(dec.Value)
 		if dec.Data == nil {
 			return errors.New("missing required field 'input' in transaction")
 		}
-		itx.Data = *dec.Data
+		itx.Datav = *dec.Data
 		if dec.V == nil {
 			return errors.New("missing required field 'v' in transaction")
 		}

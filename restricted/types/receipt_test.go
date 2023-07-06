@@ -45,24 +45,24 @@ func TestDeriveFields(t *testing.T) {
 	to3 := core.HexToAddress("0x3")
 	txs := Transactions{
 		NewTx(&LegacyTx{
-			Nonce:    1,
-			Value:    big.NewInt(1),
-			Gas:      1,
-			GasPrice: big.NewInt(1),
+			Noncev:    1,
+			Valuev:    big.NewInt(1),
+			Gasv:      1,
+			GasPricev: big.NewInt(1),
 		}),
 		NewTx(&LegacyTx{
-			To:       &to2,
-			Nonce:    2,
-			Value:    big.NewInt(2),
-			Gas:      2,
-			GasPrice: big.NewInt(2),
+			Tov:       &to2,
+			Noncev:    2,
+			Valuev:    big.NewInt(2),
+			Gasv:      2,
+			GasPricev: big.NewInt(2),
 		}),
 		NewTx(&AccessListTx{
-			To:       &to3,
-			Nonce:    3,
-			Value:    big.NewInt(3),
-			Gas:      3,
-			GasPrice: big.NewInt(3),
+			Tov:       &to3,
+			Noncev:    3,
+			Valuev:    big.NewInt(3),
+			Gasv:      3,
+			GasPricev: big.NewInt(3),
 		}),
 	}
 	// Create the corresponding receipts

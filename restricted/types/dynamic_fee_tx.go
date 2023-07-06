@@ -23,15 +23,15 @@ import (
 )
 
 type DynamicFeeTx struct {
-	ChainID    *big.Int
-	Nonce      uint64
-	GasTipCap  *big.Int
-	GasFeeCap  *big.Int
-	Gas        uint64
-	To         *core.Address `rlp:"nil"` // nil means contract creation
-	Value      *big.Int
-	Data       []byte
-	AccessList AccessList
+	ChainIDv    *big.Int
+	Noncev      uint64
+	GasTipCapv  *big.Int
+	GasFeeCapv  *big.Int
+	Gasv        uint64
+	Tov         *core.Address `rlp:"nil"` // nil means contract creation
+	Valuev      *big.Int
+	Datav       []byte
+	AccessListv AccessList
 
 	// Signature values
 	V *big.Int `json:"v" gencodec:"required"`
@@ -40,34 +40,34 @@ type DynamicFeeTx struct {
 }
 
 // copy creates a deep copy of the transaction data and initializes all fields.
-func (tx *DynamicFeeTx) copy() TxData {
+func (tx *DynamicFeeTx) Copy() TxData {
 	cpy := &DynamicFeeTx{
-		Nonce: tx.Nonce,
-		To:    tx.To, // TODO: copy pointed-to address
-		Data:  core.CopyBytes(tx.Data),
-		Gas:   tx.Gas,
+		Noncev: tx.Noncev,
+		Tov:    tx.Tov, // TODO: copy pointed-to address
+		Datav:  core.CopyBytes(tx.Datav),
+		Gasv:   tx.Gasv,
 		// These are copied below.
-		AccessList: make(AccessList, len(tx.AccessList)),
-		Value:      new(big.Int),
-		ChainID:    new(big.Int),
-		GasTipCap:  new(big.Int),
-		GasFeeCap:  new(big.Int),
+		AccessListv: make(AccessList, len(tx.AccessListv)),
+		Valuev:      new(big.Int),
+		ChainIDv:    new(big.Int),
+		GasTipCapv:  new(big.Int),
+		GasFeeCapv:  new(big.Int),
 		V:          new(big.Int),
 		R:          new(big.Int),
 		S:          new(big.Int),
 	}
-	copy(cpy.AccessList, tx.AccessList)
-	if tx.Value != nil {
-		cpy.Value.Set(tx.Value)
+	copy(cpy.AccessListv, tx.AccessListv)
+	if tx.Valuev != nil {
+		cpy.Valuev.Set(tx.Valuev)
 	}
-	if tx.ChainID != nil {
-		cpy.ChainID.Set(tx.ChainID)
+	if tx.ChainIDv != nil {
+		cpy.ChainIDv.Set(tx.ChainIDv)
 	}
-	if tx.GasTipCap != nil {
-		cpy.GasTipCap.Set(tx.GasTipCap)
+	if tx.GasTipCapv != nil {
+		cpy.GasTipCapv.Set(tx.GasTipCapv)
 	}
-	if tx.GasFeeCap != nil {
-		cpy.GasFeeCap.Set(tx.GasFeeCap)
+	if tx.GasFeeCapv != nil {
+		cpy.GasFeeCapv.Set(tx.GasFeeCapv)
 	}
 	if tx.V != nil {
 		cpy.V.Set(tx.V)
@@ -82,23 +82,23 @@ func (tx *DynamicFeeTx) copy() TxData {
 }
 
 // accessors for innerTx.
-func (tx *DynamicFeeTx) txType() byte           { return DynamicFeeTxType }
-func (tx *DynamicFeeTx) chainID() *big.Int      { return tx.ChainID }
-func (tx *DynamicFeeTx) protected() bool        { return true }
-func (tx *DynamicFeeTx) accessList() AccessList { return tx.AccessList }
-func (tx *DynamicFeeTx) data() []byte           { return tx.Data }
-func (tx *DynamicFeeTx) gas() uint64            { return tx.Gas }
-func (tx *DynamicFeeTx) gasFeeCap() *big.Int    { return tx.GasFeeCap }
-func (tx *DynamicFeeTx) gasTipCap() *big.Int    { return tx.GasTipCap }
-func (tx *DynamicFeeTx) gasPrice() *big.Int     { return tx.GasFeeCap }
-func (tx *DynamicFeeTx) value() *big.Int        { return tx.Value }
-func (tx *DynamicFeeTx) nonce() uint64          { return tx.Nonce }
-func (tx *DynamicFeeTx) to() *core.Address    { return tx.To }
+func (tx *DynamicFeeTx) TxType() byte           { return DynamicFeeTxType }
+func (tx *DynamicFeeTx) ChainID() *big.Int      { return tx.ChainIDv }
+func (tx *DynamicFeeTx) Protected() bool        { return true }
+func (tx *DynamicFeeTx) AccessList() AccessList { return tx.AccessListv }
+func (tx *DynamicFeeTx) Data() []byte           { return tx.Datav }
+func (tx *DynamicFeeTx) Gas() uint64            { return tx.Gasv }
+func (tx *DynamicFeeTx) GasFeeCap() *big.Int    { return tx.GasFeeCapv }
+func (tx *DynamicFeeTx) GasTipCap() *big.Int    { return tx.GasTipCapv }
+func (tx *DynamicFeeTx) GasPrice() *big.Int     { return tx.GasFeeCapv }
+func (tx *DynamicFeeTx) Value() *big.Int        { return tx.Valuev }
+func (tx *DynamicFeeTx) Nonce() uint64          { return tx.Noncev }
+func (tx *DynamicFeeTx) To() *core.Address    { return tx.Tov }
 
-func (tx *DynamicFeeTx) rawSignatureValues() (v, r, s *big.Int) {
+func (tx *DynamicFeeTx) RawSignatureValues() (v, r, s *big.Int) {
 	return tx.V, tx.R, tx.S
 }
 
-func (tx *DynamicFeeTx) setSignatureValues(chainID, v, r, s *big.Int) {
-	tx.ChainID, tx.V, tx.R, tx.S = chainID, v, r, s
+func (tx *DynamicFeeTx) SetSignatureValues(chainID, v, r, s *big.Int) {
+	tx.ChainIDv, tx.V, tx.R, tx.S = chainID, v, r, s
 }

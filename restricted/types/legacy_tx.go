@@ -24,12 +24,12 @@ import (
 
 // LegacyTx is the transaction data of regular Ethereum transactions.
 type LegacyTx struct {
-	Nonce    uint64          // nonce of sender account
-	GasPrice *big.Int        // wei per gas
-	Gas      uint64          // gas limit
-	To       *core.Address `rlp:"nil"` // nil means contract creation
-	Value    *big.Int        // wei amount
-	Data     []byte          // contract invocation input data
+	Noncev    uint64          // nonce of sender account
+	GasPricev *big.Int        // wei per gas
+	Gasv      uint64          // gas limit
+	Tov       *core.Address `rlp:"nil"` // nil means contract creation
+	Valuev    *big.Int        // wei amount
+	Datav     []byte          // contract invocation input data
 	V, R, S  *big.Int        // signature values
 }
 
@@ -37,12 +37,12 @@ type LegacyTx struct {
 // Deprecated: use NewTx instead.
 func NewTransaction(nonce uint64, to core.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, data []byte) *Transaction {
 	return NewTx(&LegacyTx{
-		Nonce:    nonce,
-		To:       &to,
-		Value:    amount,
-		Gas:      gasLimit,
-		GasPrice: gasPrice,
-		Data:     data,
+		Noncev:    nonce,
+		Tov:       &to,
+		Valuev:    amount,
+		Gasv:      gasLimit,
+		GasPricev: gasPrice,
+		Datav:     data,
 	})
 }
 
@@ -50,33 +50,33 @@ func NewTransaction(nonce uint64, to core.Address, amount *big.Int, gasLimit uin
 // Deprecated: use NewTx instead.
 func NewContractCreation(nonce uint64, amount *big.Int, gasLimit uint64, gasPrice *big.Int, data []byte) *Transaction {
 	return NewTx(&LegacyTx{
-		Nonce:    nonce,
-		Value:    amount,
-		Gas:      gasLimit,
-		GasPrice: gasPrice,
-		Data:     data,
+		Noncev:    nonce,
+		Valuev:    amount,
+		Gasv:      gasLimit,
+		GasPricev: gasPrice,
+		Datav:     data,
 	})
 }
 
 // copy creates a deep copy of the transaction data and initializes all fields.
-func (tx *LegacyTx) copy() TxData {
+func (tx *LegacyTx) Copy() TxData {
 	cpy := &LegacyTx{
-		Nonce: tx.Nonce,
-		To:    tx.To, // TODO: copy pointed-to address
-		Data:  core.CopyBytes(tx.Data),
-		Gas:   tx.Gas,
+		Noncev: tx.Noncev,
+		Tov:    tx.Tov, // TODO: copy pointed-to address
+		Datav:  core.CopyBytes(tx.Datav),
+		Gasv:   tx.Gasv,
 		// These are initialized below.
-		Value:    new(big.Int),
-		GasPrice: new(big.Int),
+		Valuev:    new(big.Int),
+		GasPricev: new(big.Int),
 		V:        new(big.Int),
 		R:        new(big.Int),
 		S:        new(big.Int),
 	}
-	if tx.Value != nil {
-		cpy.Value.Set(tx.Value)
+	if tx.Valuev != nil {
+		cpy.Valuev.Set(tx.Valuev)
 	}
-	if tx.GasPrice != nil {
-		cpy.GasPrice.Set(tx.GasPrice)
+	if tx.GasPricev != nil {
+		cpy.GasPricev.Set(tx.GasPricev)
 	}
 	if tx.V != nil {
 		cpy.V.Set(tx.V)
@@ -91,22 +91,22 @@ func (tx *LegacyTx) copy() TxData {
 }
 
 // accessors for innerTx.
-func (tx *LegacyTx) txType() byte           { return LegacyTxType }
-func (tx *LegacyTx) chainID() *big.Int      { return deriveChainId(tx.V) }
-func (tx *LegacyTx) accessList() AccessList { return nil }
-func (tx *LegacyTx) data() []byte           { return tx.Data }
-func (tx *LegacyTx) gas() uint64            { return tx.Gas }
-func (tx *LegacyTx) gasPrice() *big.Int     { return tx.GasPrice }
-func (tx *LegacyTx) gasTipCap() *big.Int    { return tx.GasPrice }
-func (tx *LegacyTx) gasFeeCap() *big.Int    { return tx.GasPrice }
-func (tx *LegacyTx) value() *big.Int        { return tx.Value }
-func (tx *LegacyTx) nonce() uint64          { return tx.Nonce }
-func (tx *LegacyTx) to() *core.Address    { return tx.To }
+func (tx *LegacyTx) TxType() byte           { return LegacyTxType }
+func (tx *LegacyTx) ChainID() *big.Int      { return deriveChainId(tx.V) }
+func (tx *LegacyTx) AccessList() AccessList { return nil }
+func (tx *LegacyTx) Data() []byte           { return tx.Datav }
+func (tx *LegacyTx) Gas() uint64            { return tx.Gasv }
+func (tx *LegacyTx) GasPrice() *big.Int     { return tx.GasPricev }
+func (tx *LegacyTx) GasTipCap() *big.Int    { return tx.GasPricev }
+func (tx *LegacyTx) GasFeeCap() *big.Int    { return tx.GasPricev }
+func (tx *LegacyTx) Value() *big.Int        { return tx.Valuev }
+func (tx *LegacyTx) Nonce() uint64          { return tx.Noncev }
+func (tx *LegacyTx) To() *core.Address    { return tx.Tov }
 
-func (tx *LegacyTx) rawSignatureValues() (v, r, s *big.Int) {
+func (tx *LegacyTx) RawSignatureValues() (v, r, s *big.Int) {
 	return tx.V, tx.R, tx.S
 }
 
-func (tx *LegacyTx) setSignatureValues(chainID, v, r, s *big.Int) {
+func (tx *LegacyTx) SetSignatureValues(chainID, v, r, s *big.Int) {
 	tx.V, tx.R, tx.S = v, r, s
 }

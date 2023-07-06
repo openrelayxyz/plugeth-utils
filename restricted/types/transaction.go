@@ -65,7 +65,7 @@ func bigMin(a, b *big.Int) *big.Int {
 // NewTx creates a new transaction.
 func NewTx(inner TxData) *Transaction {
 	tx := new(Transaction)
-	tx.setDecoded(inner.copy(), 0)
+	tx.setDecoded(inner.Copy(), 0)
 	return tx
 }
 
@@ -73,22 +73,22 @@ func NewTx(inner TxData) *Transaction {
 //
 // This is implemented by DynamicFeeTx, LegacyTx and AccessListTx.
 type TxData interface {
-	txType() byte // returns the type ID
-	copy() TxData // creates a deep copy and initializes all fields
+	TxType() byte // returns the type ID
+	Copy() TxData // creates a deep copy and initializes all fields
 
-	chainID() *big.Int
-	accessList() AccessList
-	data() []byte
-	gas() uint64
-	gasPrice() *big.Int
-	gasTipCap() *big.Int
-	gasFeeCap() *big.Int
-	value() *big.Int
-	nonce() uint64
-	to() *core.Address
+	ChainID() *big.Int
+	AccessList() AccessList
+	Data() []byte
+	Gas() uint64
+	GasPrice() *big.Int
+	GasTipCap() *big.Int
+	GasFeeCap() *big.Int
+	Value() *big.Int
+	Nonce() uint64
+	To() *core.Address
 
-	rawSignatureValues() (v, r, s *big.Int)
-	setSignatureValues(chainID, v, r, s *big.Int)
+	RawSignatureValues() (v, r, s *big.Int)
+	SetSignatureValues(chainID, v, r, s *big.Int)
 }
 
 // EncodeRLP implements rlp.Encoder
@@ -251,45 +251,45 @@ func (tx *Transaction) Protected() bool {
 
 // Type returns the transaction type.
 func (tx *Transaction) Type() uint8 {
-	return tx.inner.txType()
+	return tx.inner.TxType()
 }
 
 // ChainId returns the EIP155 chain ID of the transaction. The return value will always be
 // non-nil. For legacy transactions which are not replay-protected, the return value is
 // zero.
 func (tx *Transaction) ChainId() *big.Int {
-	return tx.inner.chainID()
+	return tx.inner.ChainID()
 }
 
 // Data returns the input data of the transaction.
-func (tx *Transaction) Data() []byte { return tx.inner.data() }
+func (tx *Transaction) Data() []byte { return tx.inner.Data() }
 
 // AccessList returns the access list of the transaction.
-func (tx *Transaction) AccessList() AccessList { return tx.inner.accessList() }
+func (tx *Transaction) AccessList() AccessList { return tx.inner.AccessList() }
 
 // Gas returns the gas limit of the transaction.
-func (tx *Transaction) Gas() uint64 { return tx.inner.gas() }
+func (tx *Transaction) Gas() uint64 { return tx.inner.Gas() }
 
 // GasPrice returns the gas price of the transaction.
-func (tx *Transaction) GasPrice() *big.Int { return new(big.Int).Set(tx.inner.gasPrice()) }
+func (tx *Transaction) GasPrice() *big.Int { return new(big.Int).Set(tx.inner.GasPrice()) }
 
 // GasTipCap returns the gasTipCap per gas of the transaction.
-func (tx *Transaction) GasTipCap() *big.Int { return new(big.Int).Set(tx.inner.gasTipCap()) }
+func (tx *Transaction) GasTipCap() *big.Int { return new(big.Int).Set(tx.inner.GasTipCap()) }
 
 // GasFeeCap returns the fee cap per gas of the transaction.
-func (tx *Transaction) GasFeeCap() *big.Int { return new(big.Int).Set(tx.inner.gasFeeCap()) }
+func (tx *Transaction) GasFeeCap() *big.Int { return new(big.Int).Set(tx.inner.GasFeeCap()) }
 
 // Value returns the ether amount of the transaction.
-func (tx *Transaction) Value() *big.Int { return new(big.Int).Set(tx.inner.value()) }
+func (tx *Transaction) Value() *big.Int { return new(big.Int).Set(tx.inner.Value()) }
 
 // Nonce returns the sender account nonce of the transaction.
-func (tx *Transaction) Nonce() uint64 { return tx.inner.nonce() }
+func (tx *Transaction) Nonce() uint64 { return tx.inner.Nonce() }
 
 // To returns the recipient address of the transaction.
 // For contract-creation transactions, To returns nil.
 func (tx *Transaction) To() *core.Address {
 	// Copy the pointed-to address.
-	ito := tx.inner.to()
+	ito := tx.inner.To()
 	if ito == nil {
 		return nil
 	}
@@ -307,27 +307,27 @@ func (tx *Transaction) Cost() *big.Int {
 // RawSignatureValues returns the V, R, S signature values of the transaction.
 // The return values should not be modified by the caller.
 func (tx *Transaction) RawSignatureValues() (v, r, s *big.Int) {
-	return tx.inner.rawSignatureValues()
+	return tx.inner.RawSignatureValues()
 }
 
 // GasFeeCapCmp compares the fee cap of two transactions.
 func (tx *Transaction) GasFeeCapCmp(other *Transaction) int {
-	return tx.inner.gasFeeCap().Cmp(other.inner.gasFeeCap())
+	return tx.inner.GasFeeCap().Cmp(other.inner.GasFeeCap())
 }
 
 // GasFeeCapIntCmp compares the fee cap of the transaction against the given fee cap.
 func (tx *Transaction) GasFeeCapIntCmp(other *big.Int) int {
-	return tx.inner.gasFeeCap().Cmp(other)
+	return tx.inner.GasFeeCap().Cmp(other)
 }
 
 // GasTipCapCmp compares the gasTipCap of two transactions.
 func (tx *Transaction) GasTipCapCmp(other *Transaction) int {
-	return tx.inner.gasTipCap().Cmp(other.inner.gasTipCap())
+	return tx.inner.GasTipCap().Cmp(other.inner.GasTipCap())
 }
 
 // GasTipCapIntCmp compares the gasTipCap of the transaction against the given gasTipCap.
 func (tx *Transaction) GasTipCapIntCmp(other *big.Int) int {
-	return tx.inner.gasTipCap().Cmp(other)
+	return tx.inner.GasTipCap().Cmp(other)
 }
 
 // EffectiveGasTip returns the effective miner gasTipCap for the given base fee.
@@ -403,8 +403,8 @@ func (tx *Transaction) WithSignature(signer Signer, sig []byte) (*Transaction, e
 	if err != nil {
 		return nil, err
 	}
-	cpy := tx.inner.copy()
-	cpy.setSignatureValues(signer.ChainID(), v, r, s)
+	cpy := tx.inner.Copy()
+	cpy.SetSignatureValues(signer.ChainID(), v, r, s)
 	return &Transaction{inner: cpy, time: tx.time}, nil
 }
 

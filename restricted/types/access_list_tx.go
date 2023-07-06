@@ -44,42 +44,42 @@ func (al AccessList) StorageKeys() int {
 
 // AccessListTx is the data of EIP-2930 access list transactions.
 type AccessListTx struct {
-	ChainID    *big.Int        // destination chain ID
-	Nonce      uint64          // nonce of sender account
-	GasPrice   *big.Int        // wei per gas
-	Gas        uint64          // gas limit
-	To         *core.Address `rlp:"nil"` // nil means contract creation
-	Value      *big.Int        // wei amount
-	Data       []byte          // contract invocation input data
-	AccessList AccessList      // EIP-2930 access list
+	ChainIDv    *big.Int        // destination chain ID
+	Noncev      uint64          // nonce of sender account
+	GasPricev   *big.Int        // wei per gas
+	Gasv        uint64          // gas limit
+	Tov         *core.Address `rlp:"nil"` // nil means contract creation
+	Valuev      *big.Int        // wei amount
+	Datav       []byte          // contract invocation input data
+	AccessListv AccessList      // EIP-2930 access list
 	V, R, S    *big.Int        // signature values
 }
 
 // copy creates a deep copy of the transaction data and initializes all fields.
-func (tx *AccessListTx) copy() TxData {
+func (tx *AccessListTx) Copy() TxData {
 	cpy := &AccessListTx{
-		Nonce: tx.Nonce,
-		To:    tx.To, // TODO: copy pointed-to address
-		Data:  core.CopyBytes(tx.Data),
-		Gas:   tx.Gas,
+		Noncev: tx.Noncev,
+		Tov:    tx.Tov, // TODO: copy pointed-to address
+		Datav:  core.CopyBytes(tx.Datav),
+		Gasv:   tx.Gasv,
 		// These are copied below.
-		AccessList: make(AccessList, len(tx.AccessList)),
-		Value:      new(big.Int),
-		ChainID:    new(big.Int),
-		GasPrice:   new(big.Int),
+		AccessListv: make(AccessList, len(tx.AccessListv)),
+		Valuev:      new(big.Int),
+		ChainIDv:    new(big.Int),
+		GasPricev:   new(big.Int),
 		V:          new(big.Int),
 		R:          new(big.Int),
 		S:          new(big.Int),
 	}
-	copy(cpy.AccessList, tx.AccessList)
+	copy(cpy.AccessListv, tx.AccessListv)
 	if tx.Value != nil {
-		cpy.Value.Set(tx.Value)
+		cpy.Valuev.Set(tx.Valuev)
 	}
 	if tx.ChainID != nil {
-		cpy.ChainID.Set(tx.ChainID)
+		cpy.ChainIDv.Set(tx.ChainIDv)
 	}
 	if tx.GasPrice != nil {
-		cpy.GasPrice.Set(tx.GasPrice)
+		cpy.GasPricev.Set(tx.GasPricev)
 	}
 	if tx.V != nil {
 		cpy.V.Set(tx.V)
@@ -94,23 +94,23 @@ func (tx *AccessListTx) copy() TxData {
 }
 
 // accessors for innerTx.
-func (tx *AccessListTx) txType() byte           { return AccessListTxType }
-func (tx *AccessListTx) chainID() *big.Int      { return tx.ChainID }
-func (tx *AccessListTx) protected() bool        { return true }
-func (tx *AccessListTx) accessList() AccessList { return tx.AccessList }
-func (tx *AccessListTx) data() []byte           { return tx.Data }
-func (tx *AccessListTx) gas() uint64            { return tx.Gas }
-func (tx *AccessListTx) gasPrice() *big.Int     { return tx.GasPrice }
-func (tx *AccessListTx) gasTipCap() *big.Int    { return tx.GasPrice }
-func (tx *AccessListTx) gasFeeCap() *big.Int    { return tx.GasPrice }
-func (tx *AccessListTx) value() *big.Int        { return tx.Value }
-func (tx *AccessListTx) nonce() uint64          { return tx.Nonce }
-func (tx *AccessListTx) to() *core.Address    { return tx.To }
+func (tx *AccessListTx) TxType() byte           { return AccessListTxType }
+func (tx *AccessListTx) ChainID() *big.Int      { return tx.ChainIDv }
+func (tx *AccessListTx) Protected() bool        { return true }
+func (tx *AccessListTx) AccessList() AccessList { return tx.AccessListv }
+func (tx *AccessListTx) Data() []byte           { return tx.Datav }
+func (tx *AccessListTx) Gas() uint64            { return tx.Gasv }
+func (tx *AccessListTx) GasPrice() *big.Int     { return tx.GasPricev }
+func (tx *AccessListTx) GasTipCap() *big.Int    { return tx.GasPricev }
+func (tx *AccessListTx) GasFeeCap() *big.Int    { return tx.GasPricev }
+func (tx *AccessListTx) Value() *big.Int        { return tx.Valuev }
+func (tx *AccessListTx) Nonce() uint64          { return tx.Noncev }
+func (tx *AccessListTx) To() *core.Address    { return tx.Tov }
 
-func (tx *AccessListTx) rawSignatureValues() (v, r, s *big.Int) {
+func (tx *AccessListTx) RawSignatureValues() (v, r, s *big.Int) {
 	return tx.V, tx.R, tx.S
 }
 
-func (tx *AccessListTx) setSignatureValues(chainID, v, r, s *big.Int) {
-	tx.ChainID, tx.V, tx.R, tx.S = chainID, v, r, s
+func (tx *AccessListTx) SetSignatureValues(chainID, v, r, s *big.Int) {
+	tx.ChainIDv, tx.V, tx.R, tx.S = chainID, v, r, s
 }
