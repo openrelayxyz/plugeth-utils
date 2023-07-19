@@ -25,7 +25,7 @@ func (r Receipt) MarshalJSON() ([]byte, error) {
 		TxHash            core.Hash      `json:"transactionHash" gencodec:"required"`
 		ContractAddress   core.Address   `json:"contractAddress"`
 		GasUsed           hexutil.Uint64 `json:"gasUsed" gencodec:"required"`
-		EffectiveGasPrice *hexutil.Big   `json:"effectiveGasPrice,omitempty"`
+		EffectiveGasPrice *hexutil.Big   `json:"effectiveGasPrice"`
 		BlockHash         core.Hash      `json:"blockHash,omitempty"`
 		BlockNumber       *hexutil.Big   `json:"blockNumber,omitempty"`
 		TransactionIndex  hexutil.Uint   `json:"transactionIndex"`
@@ -59,7 +59,7 @@ func (r *Receipt) UnmarshalJSON(input []byte) error {
 		TxHash            *core.Hash      `json:"transactionHash" gencodec:"required"`
 		ContractAddress   *core.Address   `json:"contractAddress"`
 		GasUsed           *hexutil.Uint64 `json:"gasUsed" gencodec:"required"`
-		EffectiveGasPrice *hexutil.Big    `json:"effectiveGasPrice,omitempty"`
+		EffectiveGasPrice *hexutil.Big    `json:"effectiveGasPrice"`
 		BlockHash         *core.Hash      `json:"blockHash,omitempty"`
 		BlockNumber       *hexutil.Big    `json:"blockNumber,omitempty"`
 		TransactionIndex  *hexutil.Uint   `json:"transactionIndex"`
