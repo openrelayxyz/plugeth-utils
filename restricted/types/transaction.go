@@ -44,6 +44,7 @@ const (
 	LegacyTxType = iota
 	AccessListTxType
 	DynamicFeeTxType
+	BlobTxType
 )
 
 // Transaction is an Ethereum transaction.
@@ -83,6 +84,8 @@ type TxData interface {
 	gasPrice() *big.Int
 	gasTipCap() *big.Int
 	gasFeeCap() *big.Int
+	blobGas() uint64
+	blobGasFeeCap() *big.Int
 	value() *big.Int
 	nonce() uint64
 	to() *core.Address
@@ -190,6 +193,10 @@ func (tx *Transaction) decodeTyped(b []byte) (TxData, error) {
 		var inner DynamicFeeTx
 		err := rlp.DecodeBytes(b[1:], &inner)
 		return &inner, err
+	case BlobTxType:
+		var inner BlobTx
+		err := rlp.DecodeBytes(b[1:], &inner)
+		return &inner, err
 	default:
 		return nil, ErrTxTypeNotSupported
 	}
@@ -279,6 +286,12 @@ func (tx *Transaction) GasTipCap() *big.Int { return new(big.Int).Set(tx.inner.g
 // GasFeeCap returns the fee cap per gas of the transaction.
 func (tx *Transaction) GasFeeCap() *big.Int { return new(big.Int).Set(tx.inner.gasFeeCap()) }
 
+// BlobGasFeeCap returns the fee cap per gas of the transaction.
+func (tx *Transaction) BlobGasFeeCap() *big.Int { return new(big.Int).Set(tx.inner.blobGasFeeCap()) }
+
+// BlobGas returns the blob gas of the transaction.
+func (tx *Transaction) BlobGas() uint64 { return tx.inner.blobGas() }
+
 // Value returns the ether amount of the transaction.
 func (tx *Transaction) Value() *big.Int { return new(big.Int).Set(tx.inner.value()) }
 
@@ -297,12 +310,16 @@ func (tx *Transaction) To() *core.Address {
 	return &cpy
 }
 
-// Cost returns gas * gasPrice + value.
+// Cost returns (gas * gasPrice) + (blobGas * blobGasPrice) + value.
 func (tx *Transaction) Cost() *big.Int {
 	total := new(big.Int).Mul(tx.GasPrice(), new(big.Int).SetUint64(tx.Gas()))
+	if tx.Type() == BlobTxType {
+		total.Add(total, new(big.Int).Mul(tx.BlobGasFeeCap(), new(big.Int).SetUint64(tx.BlobGas())))
+	}
 	total.Add(total, tx.Value())
 	return total
 }
+
 
 // RawSignatureValues returns the V, R, S signature values of the transaction.
 // The return values should not be modified by the caller.
@@ -636,3 +653,12 @@ func (m Message) Nonce() uint64          { return m.nonce }
 func (m Message) Data() []byte           { return m.data }
 func (m Message) AccessList() AccessList { return m.accessList }
 func (m Message) CheckNonce() bool       { return m.checkNonce }
+
+// copyAddressPtr copies an address.
+func copyAddressPtr(a *core.Address) *core.Address {
+	if a == nil {
+		return nil
+	}
+	cpy := *a
+	return &cpy
+}
