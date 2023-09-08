@@ -1,20 +1,11 @@
 package bls12381
 
 import (
-	"encoding/hex"
 	"bytes"
 	"crypto/rand"
 	"math/big"
 	"testing"
 )
-
-func fromHex(s string) []byte {
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		panic(err)
-	}
-	return b
-}
 
 func (g *G1) one() *PointG1 {
 	one, _ := g.fromBytesUnchecked(
