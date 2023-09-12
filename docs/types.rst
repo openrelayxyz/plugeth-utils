@@ -15,7 +15,7 @@ These plugins provide new json rpc methods to access several objects containing 
 Subcommand
 ------------
 
-A subcommand redifines the total behavior of Geth and could stand on its own. In contrast with the other plugin types which, in general, are meant to capture and manipulate information, a subcommand is meant to change the overall behavior of Geth. It may do this in order to capture information but the primary fuctionality is a modulation of geth behaviour.
+A subcommand redefines the total behavior of Geth and could stand on its own. In contrast with the other plugin types which, in general, are meant to capture and manipulate information, a subcommand is meant to change the overall behavior of Geth. It may do this in order to capture information but the primary fuctionality is a modulation of geth behaviour.
 
 Tracers
 -------

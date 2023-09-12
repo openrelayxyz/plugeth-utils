@@ -14,7 +14,7 @@ Flags
 
 * **Name:** Flags
 * **Type:** `flag.FlagSet`_
-* **Behavior:** This FlagSet will be parsed and your plugin will be able to access the resulting flags. Flags will be passed to Geth from the command line and are intended to  of the plugin. Note that if any flags are provided, certain checks are disabled within Geth to avoid failing due to unexpected flags.
+* **Behavior:** This FlagSet will be parsed and your plugin will be able to access the resulting flags. Flags will be passed to Geth from the command line and are intended to configure the behavior of the plugin. Passed flags must follow ``--`` to be parsed by this FlagSet, which is necessary to avoid Geth failing due to unexpected flags.
 
 Subcommands
 -----------

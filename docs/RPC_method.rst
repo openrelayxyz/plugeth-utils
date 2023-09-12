@@ -49,6 +49,6 @@ A simple implimentation would look like so:
 Access
 ******
 
-As with pre-built plugins, a``.so`` will need to be built from``main.go`` and moved into ``~/.ethereum/plugins``. Geth will need to be started with with a ``http.api=mymamespace`` flag. Additionally you will need to include a ``--http`` flag in order to access the standard json rpc methods.
+As with pre-built plugins, a``.so`` will need to be built from``main.go`` and moved into ``~/.ethereum/plugins``. Geth will need to be started with with a ``http.api=mynamespace`` flag. Additionally you will need to include a ``--http`` flag in order to access the standard json rpc methods.
 
 The plugin can now be accessed with an rpc call to ``mynamespace_helloWorld``.

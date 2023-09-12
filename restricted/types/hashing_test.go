@@ -26,10 +26,10 @@ import (
 	"testing"
 
 	"github.com/openrelayxyz/plugeth-utils/core"
-	"github.com/openrelayxyz/plugeth-utils/restricted/hexutil"
-	"github.com/openrelayxyz/plugeth-utils/restricted/types"
 	"github.com/openrelayxyz/plugeth-utils/restricted/crypto"
+	"github.com/openrelayxyz/plugeth-utils/restricted/hexutil"
 	"github.com/openrelayxyz/plugeth-utils/restricted/rlp"
+	"github.com/openrelayxyz/plugeth-utils/restricted/types"
 )
 
 func fromHex(data string) []byte {
@@ -136,9 +136,10 @@ func (d *hashToHumanReadable) Reset() {
 	d.data = make([]byte, 0)
 }
 
-func (d *hashToHumanReadable) Update(i []byte, i2 []byte) {
+func (d *hashToHumanReadable) Update(i []byte, i2 []byte) error {
 	l := fmt.Sprintf("%x %x\n", i, i2)
 	d.data = append(d.data, []byte(l)...)
+	return nil
 }
 
 func (d *hashToHumanReadable) Hash() core.Hash {

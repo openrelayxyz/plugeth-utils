@@ -57,6 +57,7 @@ type Backend interface {
 
 	GetTrie(hash Hash) (Trie, error)
 	GetAccountTrie(stateRoot Hash, account Address) (Trie, error)
+	GetContractCode(Hash) ([]byte, error)
 
 	// ChainConfig() *params.ChainConfig
 	// Engine() consensus.Engine

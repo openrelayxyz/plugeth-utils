@@ -17,15 +17,34 @@
 package bls12381
 
 import (
-	"strings"
 	"encoding/hex"
 	"errors"
 	"math/big"
 )
 
-func bigFromHex(hex string) *big.Int {
-	b, _ := hex.DecodeString(strings.TrimPrefix(hex, "0x"))
-	return new(big.Int).SetBytes(b)
+// fromHex returns the bytes represented by the hexadecimal string s.
+// s may be prefixed with "0x".
+func fromHex(s string) []byte {
+	if has0xPrefix(s) {
+		s = s[2:]
+	}
+	if len(s)%2 == 1 {
+		s = "0" + s
+	}
+	h, err := hex.DecodeString(s)
+	if err != nil {
+		panic(err)
+	}
+	return h
+}
+
+// has0xPrefix validates str begins with '0x' or '0X'.
+func has0xPrefix(str string) bool {
+	return len(str) >= 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X')
+}
+
+func bigFromHex(s string) *big.Int {
+	return new(big.Int).SetBytes(fromHex(s))
 }
 
 // decodeFieldElement expects 64 byte input with zero top 16 bytes,
