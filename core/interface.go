@@ -121,6 +121,7 @@ type StateDB interface {
 
 type RWStateDB interface {
 	StateDB
+	AddBalance(add Address, amount *big.Int)
 }
 
 type ScopeContext interface {
