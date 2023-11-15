@@ -6,12 +6,12 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/google/gofuzz v1.1.1-0.20200604201612-c04b05f3adfa
-	github.com/holiman/uint256 v1.2.0
-	github.com/jedisct1/go-minisign v0.0.0-20190909160543-45766022959e
+	github.com/holiman/uint256 v1.2.3
+	github.com/jedisct1/go-minisign v0.0.0-20230811132847-661be99b8267
 	github.com/kylelemons/godebug v1.1.0
-	github.com/stretchr/testify v1.7.2
-	golang.org/x/crypto v0.1.0
-	golang.org/x/sys v0.5.0
+	github.com/stretchr/testify v1.8.4
+	golang.org/x/crypto v0.14.0
+	golang.org/x/sys v0.13.0
 )
 
 require (
