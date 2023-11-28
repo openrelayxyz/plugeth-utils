@@ -237,6 +237,7 @@ type Context interface {
 type Trie interface {
 	GetKey([]byte) []byte
 	GetAccount(address Address) (*StateAccount, error)
+	GetAccountByHash(address Hash) (*StateAccount, error)
 	Hash() Hash
 	NodeIterator(startKey []byte) NodeIterator
 	Prove(key []byte, fromLevel uint, proofDb KeyValueWriter) error
