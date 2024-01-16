@@ -90,11 +90,14 @@ type Header struct {
 	// WithdrawalsHash was added by EIP-4895 and is ignored in legacy headers.
 	WithdrawalsHash *core.Hash `json:"withdrawalsRoot" rlp:"optional"`
 
-	/*
-		TODO (MariusVanDerWijden) Add this field once needed
-		// Random was added during the merge and contains the BeaconState randomness
-		Random core.Hash `json:"random" rlp:"optional"`
-	*/
+	// BlobGasUsed was added by EIP-4844 and is ignored in legacy headers.
+	BlobGasUsed *uint64 `json:"blobGasUsed" rlp:"optional"`
+
+	// ExcessBlobGas was added by EIP-4844 and is ignored in legacy headers.
+	ExcessBlobGas *uint64 `json:"excessBlobGas" rlp:"optional"`
+
+	// ParentBeaconRoot was added by EIP-4788 and is ignored in legacy headers.
+	ParentBeaconRoot *core.Hash `json:"parentBeaconBlockRoot" rlp:"optional"`
 }
 
 // field type overrides for gencodec
@@ -283,6 +286,18 @@ func CopyHeader(h *Header) *Header {
 	if h.WithdrawalsHash != nil {
 		*cpy.WithdrawalsHash = *h.WithdrawalsHash
 	}
+	if h.ExcessBlobGas != nil {
+		cpy.ExcessBlobGas = new(uint64)
+		*cpy.ExcessBlobGas = *h.ExcessBlobGas
+	}
+	if h.BlobGasUsed != nil {
+		cpy.BlobGasUsed = new(uint64)
+		*cpy.BlobGasUsed = *h.BlobGasUsed
+	}
+	if h.ParentBeaconRoot != nil {
+		cpy.ParentBeaconRoot = new(core.Hash)
+		*cpy.ParentBeaconRoot = *h.ParentBeaconRoot
+	}
 	return &cpy
 }
 
@@ -347,6 +362,26 @@ func (b *Block) BaseFee() *big.Int {
 	return new(big.Int).Set(b.header.BaseFee)
 }
 
+func (b *Block) BeaconRoot() *core.Hash { return b.header.ParentBeaconRoot }
+
+func (b *Block) ExcessBlobGas() *uint64 {
+	var excessBlobGas *uint64
+	if b.header.ExcessBlobGas != nil {
+		excessBlobGas = new(uint64)
+		*excessBlobGas = *b.header.ExcessBlobGas
+	}
+	return excessBlobGas
+}
+
+func (b *Block) BlobGasUsed() *uint64 {
+	var blobGasUsed *uint64
+	if b.header.BlobGasUsed != nil {
+		blobGasUsed = new(uint64)
+		*blobGasUsed = *b.header.BlobGasUsed
+	}
+	return blobGasUsed
+}
+
 func (b *Block) Withdrawals() Withdrawals {
 	return b.withdrawals
 }
@@ -391,10 +426,8 @@ func CalcUncleHash(uncles []*Header) core.Hash {
 // WithSeal returns a new block with the data from b but the header replaced with
 // the sealed one.
 func (b *Block) WithSeal(header *Header) *Block {
-	cpy := *header
-
 	return &Block{
-		header:       &cpy,
+		header:       CopyHeader(header),
 		transactions: b.transactions,
 		uncles:       b.uncles,
 		withdrawals:  b.withdrawals,
@@ -407,6 +440,7 @@ func (b *Block) WithBody(transactions []*Transaction, uncles []*Header) *Block {
 		header:       CopyHeader(b.header),
 		transactions: make([]*Transaction, len(transactions)),
 		uncles:       make([]*Header, len(uncles)),
+		withdrawals:  b.withdrawals,
 	}
 	copy(block.transactions, transactions)
 	for i := range uncles {
@@ -417,11 +451,16 @@ func (b *Block) WithBody(transactions []*Transaction, uncles []*Header) *Block {
 
 // WithWithdrawals sets the withdrawal contents of a block, does not return a new block.
 func (b *Block) WithWithdrawals(withdrawals []*Withdrawal) *Block {
-	if withdrawals != nil {
-		b.withdrawals = make([]*Withdrawal, len(withdrawals))
-		copy(b.withdrawals, withdrawals)
+	block := &Block{
+		header:       b.header,
+		transactions: b.transactions,
+		uncles:       b.uncles,
 	}
-	return b
+	if withdrawals != nil {
+		block.withdrawals = make([]*Withdrawal, len(withdrawals))
+		copy(block.withdrawals, withdrawals)
+	}
+	return block
 }
 
 // Hash returns the keccak256 hash of b's header.
