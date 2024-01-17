@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"math/big"
 	"crypto/sha256"
+	"fmt"
 
 	"github.com/openrelayxyz/plugeth-utils/core"
 	"github.com/openrelayxyz/plugeth-utils/restricted/params"
@@ -222,7 +223,12 @@ func (tx *BlobTx) decode(input []byte) error {
 	}
 
 	if firstElemKind != rlp.List {
-		return rlp.DecodeBytes(input, tx)
+		if err := rlp.DecodeBytes(input, tx); err != nil {
+			// 0xf8b6053d850165a0bc00858bb2c97000825208944f56ffc63c28b72f79b02e91f11a4707bac4043c8080c0858bb2c97000f842a00155acead2ea1da3a7f6e9c743f4d81b1cd9f5a3382e657aa4025837e2b1651fa0019db7c3b9244969140c36c20cdcc71a821e2a995714c1ec2169f3ebd63c648280a00567aaceaed2303b577178069e5f4bfdd70d445e9eff8e63f9f0a33de98dd782a060e39ff4d29ce28325e3b48707bb8dd170ed3671428a62efcab9812555eb6db1
+			return fmt.Errorf("Decode error: %v - %v", err, firstElemKind)
+		} else {
+			return nil
+		}
 	}
 	// It's a tx with blobs.
 	var inner blobTxWithBlobs

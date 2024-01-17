@@ -1,4 +1,4 @@
-// Copyright 2019 The go-ethereum Authors
+// Copyright 2020 The go-ethereum Authors
 // This file is part of the go-ethereum library.
 //
 // The go-ethereum library is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ package rlp
 import (
 	"testing"
 
-	"github.com/openrelayxyz/plugeth-utils/restricted/hexutil"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 )
 
 // TestIterator tests some basic things about the ListIterator. A more

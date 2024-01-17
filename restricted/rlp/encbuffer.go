@@ -20,7 +20,7 @@ import (
 	"encoding/binary"
 	"io"
 	"math/big"
-	// "reflect"
+	"reflect"
 	"sync"
 
 	"github.com/holiman/uint256"
@@ -56,18 +56,18 @@ func (buf *encBuffer) size() int {
 }
 
 // makeBytes creates the encoder output.
-func (w *encBuffer) makeBytes() []byte {
-	out := make([]byte, w.size())
-	w.copyTo(out)
+func (buf *encBuffer) makeBytes() []byte {
+	out := make([]byte, buf.size())
+	buf.copyTo(out)
 	return out
 }
 
-func (w *encBuffer) copyTo(dst []byte) {
+func (buf *encBuffer) copyTo(dst []byte) {
 	strpos := 0
 	pos := 0
-	for _, head := range w.lheads {
+	for _, head := range buf.lheads {
 		// write string data before header
-		n := copy(dst[pos:], w.str[strpos:head.offset])
+		n := copy(dst[pos:], buf.str[strpos:head.offset])
 		pos += n
 		strpos += n
 		// write the header
@@ -75,7 +75,7 @@ func (w *encBuffer) copyTo(dst []byte) {
 		pos += len(enc)
 	}
 	// copy string data after the last list header
-	copy(dst[pos:], w.str[strpos:])
+	copy(dst[pos:], buf.str[strpos:])
 }
 
 // writeTo writes the encoder output to w.
@@ -145,38 +145,38 @@ func (buf *encBuffer) writeString(s string) {
 	buf.writeBytes([]byte(s))
 }
 
-// // wordBytes is the number of bytes in a big.Word
-// const wordBytes = (32 << (uint64(^big.Word(0)) >> 63)) / 8
+// wordBytes is the number of bytes in a big.Word
+const wordBytes = (32 << (uint64(^big.Word(0)) >> 63)) / 8
 
 // writeBigInt writes i as an integer.
-func (w *encBuffer) writeBigInt(i *big.Int) {
+func (buf *encBuffer) writeBigInt(i *big.Int) {
 	bitlen := i.BitLen()
 	if bitlen <= 64 {
-		w.writeUint64(i.Uint64())
+		buf.writeUint64(i.Uint64())
 		return
 	}
 	// Integer is larger than 64 bits, encode from i.Bits().
 	// The minimal byte length is bitlen rounded up to the next
 	// multiple of 8, divided by 8.
 	length := ((bitlen + 7) & -8) >> 3
-	w.encodeStringHeader(length)
-	w.str = append(w.str, make([]byte, length)...)
+	buf.encodeStringHeader(length)
+	buf.str = append(buf.str, make([]byte, length)...)
 	index := length
-	buf := w.str[len(w.str)-length:]
+	bytesBuf := buf.str[len(buf.str)-length:]
 	for _, d := range i.Bits() {
 		for j := 0; j < wordBytes && index > 0; j++ {
 			index--
-			buf[index] = byte(d)
+			bytesBuf[index] = byte(d)
 			d >>= 8
 		}
 	}
 }
 
 // writeUint256 writes z as an integer.
-func (w *encBuffer) writeUint256(z *uint256.Int) {
+func (buf *encBuffer) writeUint256(z *uint256.Int) {
 	bitlen := z.BitLen()
 	if bitlen <= 64 {
-		w.writeUint64(z.Uint64())
+		buf.writeUint64(z.Uint64())
 		return
 	}
 	nBytes := byte((bitlen + 7) / 8)
@@ -186,7 +186,7 @@ func (w *encBuffer) writeUint256(z *uint256.Int) {
 	binary.BigEndian.PutUint64(b[17:25], z[1])
 	binary.BigEndian.PutUint64(b[25:33], z[0])
 	b[32-nBytes] = 0x80 + nBytes
-	w.str = append(w.str, b[32-nBytes:]...)
+	buf.str = append(buf.str, b[32-nBytes:]...)
 }
 
 // list adds a new list header to the header stack. It returns the index of the header.
@@ -206,14 +206,14 @@ func (buf *encBuffer) listEnd(index int) {
 	}
 }
 
-// func (buf *encBuffer) encode(val interface{}) error {
-// 	rval := reflect.ValueOf(val)
-// 	writer, err := cachedWriter(rval.Type())
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return writer(rval, buf)
-// }
+func (buf *encBuffer) encode(val interface{}) error {
+	rval := reflect.ValueOf(val)
+	writer, err := cachedWriter(rval.Type())
+	if err != nil {
+		return err
+	}
+	return writer(rval, buf)
+}
 
 func (buf *encBuffer) encodeStringHeader(size int) {
 	if size < 56 {
@@ -225,72 +225,72 @@ func (buf *encBuffer) encodeStringHeader(size int) {
 	}
 }
 
-// // encReader is the io.Reader returned by EncodeToReader.
-// // It releases its encbuf at EOF.
-// type encReader struct {
-// 	buf    *encBuffer // the buffer we're reading from. this is nil when we're at EOF.
-// 	lhpos  int        // index of list header that we're reading
-// 	strpos int        // current position in string buffer
-// 	piece  []byte     // next piece to be read
-// }
+// encReader is the io.Reader returned by EncodeToReader.
+// It releases its encbuf at EOF.
+type encReader struct {
+	buf    *encBuffer // the buffer we're reading from. this is nil when we're at EOF.
+	lhpos  int        // index of list header that we're reading
+	strpos int        // current position in string buffer
+	piece  []byte     // next piece to be read
+}
 
-// func (r *encReader) Read(b []byte) (n int, err error) {
-// 	for {
-// 		if r.piece = r.next(); r.piece == nil {
-// 			// Put the encode buffer back into the pool at EOF when it
-// 			// is first encountered. Subsequent calls still return EOF
-// 			// as the error but the buffer is no longer valid.
-// 			if r.buf != nil {
-// 				encBufferPool.Put(r.buf)
-// 				r.buf = nil
-// 			}
-// 			return n, io.EOF
-// 		}
-// 		nn := copy(b[n:], r.piece)
-// 		n += nn
-// 		if nn < len(r.piece) {
-// 			// piece didn't fit, see you next time.
-// 			r.piece = r.piece[nn:]
-// 			return n, nil
-// 		}
-// 		r.piece = nil
-// 	}
-// }
+func (r *encReader) Read(b []byte) (n int, err error) {
+	for {
+		if r.piece = r.next(); r.piece == nil {
+			// Put the encode buffer back into the pool at EOF when it
+			// is first encountered. Subsequent calls still return EOF
+			// as the error but the buffer is no longer valid.
+			if r.buf != nil {
+				encBufferPool.Put(r.buf)
+				r.buf = nil
+			}
+			return n, io.EOF
+		}
+		nn := copy(b[n:], r.piece)
+		n += nn
+		if nn < len(r.piece) {
+			// piece didn't fit, see you next time.
+			r.piece = r.piece[nn:]
+			return n, nil
+		}
+		r.piece = nil
+	}
+}
 
-// // next returns the next piece of data to be read.
-// // it returns nil at EOF.
-// func (r *encReader) next() []byte {
-// 	switch {
-// 	case r.buf == nil:
-// 		return nil
+// next returns the next piece of data to be read.
+// it returns nil at EOF.
+func (r *encReader) next() []byte {
+	switch {
+	case r.buf == nil:
+		return nil
 
-// 	case r.piece != nil:
-// 		// There is still data available for reading.
-// 		return r.piece
+	case r.piece != nil:
+		// There is still data available for reading.
+		return r.piece
 
-// 	case r.lhpos < len(r.buf.lheads):
-// 		// We're before the last list header.
-// 		head := r.buf.lheads[r.lhpos]
-// 		sizebefore := head.offset - r.strpos
-// 		if sizebefore > 0 {
-// 			// String data before header.
-// 			p := r.buf.str[r.strpos:head.offset]
-// 			r.strpos += sizebefore
-// 			return p
-// 		}
-// 		r.lhpos++
-// 		return head.encode(r.buf.sizebuf[:])
+	case r.lhpos < len(r.buf.lheads):
+		// We're before the last list header.
+		head := r.buf.lheads[r.lhpos]
+		sizebefore := head.offset - r.strpos
+		if sizebefore > 0 {
+			// String data before header.
+			p := r.buf.str[r.strpos:head.offset]
+			r.strpos += sizebefore
+			return p
+		}
+		r.lhpos++
+		return head.encode(r.buf.sizebuf[:])
 
-// 	case r.strpos < len(r.buf.str):
-// 		// String data at the end, after all list headers.
-// 		p := r.buf.str[r.strpos:]
-// 		r.strpos = len(r.buf.str)
-// 		return p
+	case r.strpos < len(r.buf.str):
+		// String data at the end, after all list headers.
+		p := r.buf.str[r.strpos:]
+		r.strpos = len(r.buf.str)
+		return p
 
-// 	default:
-// 		return nil
-// 	}
-// }
+	default:
+		return nil
+	}
+}
 
 func encBufferFromWriter(w io.Writer) *encBuffer {
 	switch w := w.(type) {
