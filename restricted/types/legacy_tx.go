@@ -18,8 +18,10 @@ package types
 
 import (
 	"math/big"
+	"bytes"
 
 	"github.com/openrelayxyz/plugeth-utils/core"
+	"github.com/openrelayxyz/plugeth-utils/restricted/rlp"
 )
 
 // LegacyTx is the transaction data of regular Ethereum transactions.
@@ -116,4 +118,12 @@ func (tx *LegacyTx) rawSignatureValues() (v, r, s *big.Int) {
 
 func (tx *LegacyTx) setSignatureValues(chainID, v, r, s *big.Int) {
 	tx.V, tx.R, tx.S = v, r, s
+}
+
+func (tx *LegacyTx) encode(b *bytes.Buffer) error {
+	return rlp.Encode(b, tx)
+}
+
+func (tx *LegacyTx) decode(input []byte) error {
+	return rlp.DecodeBytes(input, tx)
 }
