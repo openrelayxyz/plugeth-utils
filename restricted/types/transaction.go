@@ -36,6 +36,7 @@ var (
 	ErrInvalidTxType        = errors.New("transaction type not valid in this context")
 	ErrTxTypeNotSupported   = errors.New("transaction type not supported")
 	ErrGasFeeCapTooLow      = errors.New("fee cap less than base fee")
+	errShortTypedTx         = errors.New("typed transaction too short")
 	errEmptyTypedTx         = errors.New("empty typed transaction bytes")
 )
 
@@ -44,6 +45,7 @@ const (
 	LegacyTxType = iota
 	AccessListTxType
 	DynamicFeeTxType
+	BlobTxType
 )
 
 // Transaction is an Ethereum transaction.
@@ -86,6 +88,9 @@ type TxData interface {
 	value() *big.Int
 	nonce() uint64
 	to() *core.Address
+	blobGas() uint64
+	blobGasFeeCap() *big.Int
+	blobHashes() []core.Hash
 
 	rawSignatureValues() (v, r, s *big.Int)
 	setSignatureValues(chainID, v, r, s *big.Int)
@@ -97,6 +102,9 @@ type TxData interface {
 	// copy of the computed value, i.e. callers are allowed to mutate the result.
 	// Method implementations can use 'dst' to store the result.
 	effectiveGasPrice(dst *big.Int, baseFee *big.Int) *big.Int
+
+	encode(b *bytes.Buffer) error
+	decode([]byte) error
 }
 
 // EncodeRLP implements rlp.Encoder
@@ -120,7 +128,7 @@ func (tx *Transaction) EncodeRLP(w io.Writer) error {
 // encodeTyped writes the canonical encoding of a typed transaction to w.
 func (tx *Transaction) encodeTyped(w *bytes.Buffer) error {
 	w.WriteByte(tx.Type())
-	return rlp.Encode(w, tx.inner)
+	return tx.inner.encode(w)
 }
 
 // MarshalBinary returns the canonical consensus encoding of the transaction.
@@ -189,21 +197,23 @@ func (tx *Transaction) UnmarshalBinary(b []byte) error {
 // decodeTyped decodes a typed transaction from the canonical format.
 func (tx *Transaction) decodeTyped(b []byte) (TxData, error) {
 	if len(b) <= 1 {
-		return nil, errEmptyTypedTx
+		return nil, errShortTypedTx
 	}
+	var inner TxData
 	switch b[0] {
 	case AccessListTxType:
-		var inner AccessListTx
-		err := rlp.DecodeBytes(b[1:], &inner)
-		return &inner, err
+		inner = new(AccessListTx)
 	case DynamicFeeTxType:
-		var inner DynamicFeeTx
-		err := rlp.DecodeBytes(b[1:], &inner)
-		return &inner, err
+		inner = new(DynamicFeeTx)
+	case BlobTxType:
+		inner = new(BlobTx)
 	default:
 		return nil, ErrTxTypeNotSupported
 	}
+	err := inner.decode(b[1:])
+	return inner, err
 }
+
 
 // setDecoded sets the inner transaction and size after decoding.
 func (tx *Transaction) setDecoded(inner TxData, size uint64) {
@@ -295,15 +305,26 @@ func (tx *Transaction) Value() *big.Int { return new(big.Int).Set(tx.inner.value
 // Nonce returns the sender account nonce of the transaction.
 func (tx *Transaction) Nonce() uint64 { return tx.inner.nonce() }
 
+// BlobGasFeeCap returns the fee cap per gas of the transaction.
+func (tx *Transaction) BlobGasFeeCap() *big.Int { return new(big.Int).Set(tx.inner.blobGasFeeCap()) }
+
+// BlobGas returns the blob gas of the transaction.
+func (tx *Transaction) BlobGas() uint64 { return tx.inner.blobGas() }
+
+func (tx *Transaction) BlobHashes() []core.Hash { return tx.inner.blobHashes() }
+
 // To returns the recipient address of the transaction.
 // For contract-creation transactions, To returns nil.
 func (tx *Transaction) To() *core.Address {
 	return copyAddressPtr(tx.inner.to())
 }
 
-// Cost returns gas * gasPrice + value.
+// Cost returns (gas * gasPrice) + (blobGas * blobGasPrice) + value.
 func (tx *Transaction) Cost() *big.Int {
 	total := new(big.Int).Mul(tx.GasPrice(), new(big.Int).SetUint64(tx.Gas()))
+	if tx.Type() == BlobTxType {
+		total.Add(total, new(big.Int).Mul(tx.BlobGasFeeCap(), new(big.Int).SetUint64(tx.BlobGas())))
+	}
 	total.Add(total, tx.Value())
 	return total
 }

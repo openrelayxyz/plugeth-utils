@@ -18,8 +18,10 @@ package types
 
 import (
 	"math/big"
+	"bytes"
 
 	"github.com/openrelayxyz/plugeth-utils/core"
+	"github.com/openrelayxyz/plugeth-utils/restricted/rlp"
 )
 
 //go:generate go run github.com/fjl/gencodec -type AccessTuple -out gen_access_tuple.go
@@ -105,6 +107,9 @@ func (tx *AccessListTx) gasFeeCap() *big.Int    { return tx.GasPrice }
 func (tx *AccessListTx) value() *big.Int        { return tx.Value }
 func (tx *AccessListTx) nonce() uint64          { return tx.Nonce }
 func (tx *AccessListTx) to() *core.Address      { return tx.To }
+func (tx *AccessListTx) blobGas() uint64 { return 0}
+func (tx *AccessListTx) blobGasFeeCap() *big.Int { return nil }
+func (tx *AccessListTx) blobHashes() []core.Hash { return nil }
 
 func (tx *AccessListTx) effectiveGasPrice(dst *big.Int, baseFee *big.Int) *big.Int {
 	return dst.Set(tx.GasPrice)
@@ -116,4 +121,11 @@ func (tx *AccessListTx) rawSignatureValues() (v, r, s *big.Int) {
 
 func (tx *AccessListTx) setSignatureValues(chainID, v, r, s *big.Int) {
 	tx.ChainID, tx.V, tx.R, tx.S = chainID, v, r, s
+}
+func (tx *AccessListTx) encode(b *bytes.Buffer) error {
+	return rlp.Encode(b, tx)
+}
+
+func (tx *AccessListTx) decode(input []byte) error {
+	return rlp.DecodeBytes(input, tx)
 }

@@ -19,6 +19,8 @@ package types
 import (
 	"bytes"
 	"sync"
+	"math"
+	"fmt"
 
 	"github.com/openrelayxyz/plugeth-utils/core"
 	"github.com/openrelayxyz/plugeth-utils/restricted/crypto"
@@ -110,4 +112,15 @@ func DeriveSha(list DerivableList, hasher TrieHasher) core.Hash {
 		hasher.Update(indexBuf, value)
 	}
 	return hasher.Hash()
+}
+
+func getPooledBuffer(size uint64) ([]byte, *bytes.Buffer, error) {
+	if size > math.MaxInt {
+		return nil, nil, fmt.Errorf("can't get buffer of size %d", size)
+	}
+	buf := encodeBufferPool.Get().(*bytes.Buffer)
+	buf.Reset()
+	buf.Grow(int(size))
+	b := buf.Bytes()[:int(size)]
+	return b, buf, nil
 }

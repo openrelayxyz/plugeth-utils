@@ -17,9 +17,11 @@
 package types
 
 import (
+	"bytes"
 	"math/big"
 
 	"github.com/openrelayxyz/plugeth-utils/core"
+	"github.com/openrelayxyz/plugeth-utils/restricted/rlp"
 )
 
 type DynamicFeeTx struct {
@@ -93,6 +95,9 @@ func (tx *DynamicFeeTx) gasPrice() *big.Int     { return tx.GasFeeCap }
 func (tx *DynamicFeeTx) value() *big.Int        { return tx.Value }
 func (tx *DynamicFeeTx) nonce() uint64          { return tx.Nonce }
 func (tx *DynamicFeeTx) to() *core.Address      { return tx.To }
+func (tx *DynamicFeeTx) blobGas() uint64 { return 0}
+func (tx *DynamicFeeTx) blobGasFeeCap() *big.Int { return nil }
+func (tx *DynamicFeeTx) blobHashes() []core.Hash { return nil }
 
 func (tx *DynamicFeeTx) effectiveGasPrice(dst *big.Int, baseFee *big.Int) *big.Int {
 	if baseFee == nil {
@@ -111,4 +116,12 @@ func (tx *DynamicFeeTx) rawSignatureValues() (v, r, s *big.Int) {
 
 func (tx *DynamicFeeTx) setSignatureValues(chainID, v, r, s *big.Int) {
 	tx.ChainID, tx.V, tx.R, tx.S = chainID, v, r, s
+}
+
+func (tx *DynamicFeeTx) encode(b *bytes.Buffer) error {
+	return rlp.Encode(b, tx)
+}
+
+func (tx *DynamicFeeTx) decode(input []byte) error {
+	return rlp.DecodeBytes(input, tx)
 }
