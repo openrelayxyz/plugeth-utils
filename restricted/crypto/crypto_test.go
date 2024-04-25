@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"crypto/ecdsa"
 	"encoding/hex"
-	"io/ioutil"
 	"math/big"
 	"os"
 	"reflect"
@@ -94,7 +93,7 @@ func TestUnmarshalPubkey(t *testing.T) {
 
 func TestSign(t *testing.T) {
 	key, _ := HexToECDSA(testPrivHex)
-	addr := core.HexToAddress(testAddrHex)
+	addr := common.HexToAddress(testAddrHex)
 
 	msg := Keccak256([]byte("foo"))
 	sig, err := Sign(msg, key)
@@ -133,7 +132,7 @@ func TestInvalidSign(t *testing.T) {
 
 func TestNewContractAddress(t *testing.T) {
 	key, _ := HexToECDSA(testPrivHex)
-	addr := core.HexToAddress(testAddrHex)
+	addr := common.HexToAddress(testAddrHex)
 	genAddr := PubkeyToAddress(key.PublicKey)
 	// sanity check before using addr to create contract address
 	checkAddr(t, genAddr, addr)
@@ -141,9 +140,9 @@ func TestNewContractAddress(t *testing.T) {
 	caddr0 := CreateAddress(addr, 0)
 	caddr1 := CreateAddress(addr, 1)
 	caddr2 := CreateAddress(addr, 2)
-	checkAddr(t, core.HexToAddress("333c3310824b7c685133f2bedb2ca4b8b4df633d"), caddr0)
-	checkAddr(t, core.HexToAddress("8bda78331c916a08481428e4b07c96d3e916d165"), caddr1)
-	checkAddr(t, core.HexToAddress("c9ddedf451bc62ce88bf9292afb13df35b670699"), caddr2)
+	checkAddr(t, common.HexToAddress("333c3310824b7c685133f2bedb2ca4b8b4df633d"), caddr0)
+	checkAddr(t, common.HexToAddress("8bda78331c916a08481428e4b07c96d3e916d165"), caddr1)
+	checkAddr(t, common.HexToAddress("c9ddedf451bc62ce88bf9292afb13df35b670699"), caddr2)
 }
 
 func TestLoadECDSA(t *testing.T) {
@@ -182,7 +181,7 @@ func TestLoadECDSA(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		f, err := ioutil.TempFile("", "loadecdsa_test.*.txt")
+		f, err := os.CreateTemp("", "loadecdsa_test.*.txt")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -203,7 +202,7 @@ func TestLoadECDSA(t *testing.T) {
 }
 
 func TestSaveECDSA(t *testing.T) {
-	f, err := ioutil.TempFile("", "saveecdsa_test.*.txt")
+	f, err := os.CreateTemp("", "saveecdsa_test.*.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -231,9 +230,9 @@ func TestValidateSignatureValues(t *testing.T) {
 		}
 	}
 	minusOne := big.NewInt(-1)
-	one := Big1
-	zero := new(big.Int)
-	secp256k1nMinus1 := new(big.Int).Sub(secp256k1N, Big1)
+	one := common.Big1
+	zero := common.Big0
+	secp256k1nMinus1 := new(big.Int).Sub(secp256k1N, common.Big1)
 
 	// correct v,r,s
 	check(true, 0, one, one)
@@ -277,8 +276,24 @@ func checkhash(t *testing.T, name string, f func([]byte) []byte, msg, exp []byte
 	}
 }
 
-func checkAddr(t *testing.T, addr0, addr1 core.Address) {
+func checkAddr(t *testing.T, addr0, addr1 common.Address) {
 	if addr0 != addr1 {
 		t.Fatalf("address mismatch: want: %x have: %x", addr0, addr1)
 	}
+}
+
+// test to help Python team with integration of libsecp256k1
+// skip but keep it after they are done
+func TestPythonIntegration(t *testing.T) {
+	kh := "289c2857d4598e37fb9647507e47a309d6133539bf21a8b9cb6df88fd5232032"
+	k0, _ := HexToECDSA(kh)
+
+	msg0 := Keccak256([]byte("foo"))
+	sig0, _ := Sign(msg0, k0)
+
+	msg1 := common.FromHex("00000000000000000000000000000000")
+	sig1, _ := Sign(msg0, k0)
+
+	t.Logf("msg: %x, privkey: %s sig: %x\n", msg0, kh, sig0)
+	t.Logf("msg: %x, privkey: %s sig: %x\n", msg1, kh, sig1)
 }

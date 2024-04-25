@@ -21,7 +21,6 @@ import (
 	"crypto/ecdsa"
 	"reflect"
 	"testing"
-	"math/big"
 
 	"github.com/openrelayxyz/plugeth-utils/core"
 	"github.com/openrelayxyz/plugeth-utils/restricted/hexutil"
@@ -71,7 +70,7 @@ func TestVerifySignature(t *testing.T) {
 	wrongkey := core.CopyBytes(testpubkey)
 	wrongkey[10]++
 	if VerifySignature(wrongkey, testmsg, sig) {
-		t.Errorf("signature valid with with wrong public key")
+		t.Errorf("signature valid with wrong public key")
 	}
 }
 
@@ -104,39 +103,11 @@ func TestDecompressPubkey(t *testing.T) {
 	}
 }
 
-// ParseBig256 parses s as a 256 bit integer in decimal or hexadecimal syntax.
-// Leading zeros are accepted. The empty string parses as zero.
-func ParseBig256(s string) (*big.Int, bool) {
-	if s == "" {
-		return new(big.Int), true
-	}
-	var bigint *big.Int
-	var ok bool
-	if len(s) >= 2 && (s[:2] == "0x" || s[:2] == "0X") {
-		bigint, ok = new(big.Int).SetString(s[2:], 16)
-	} else {
-		bigint, ok = new(big.Int).SetString(s, 10)
-	}
-	if ok && bigint.BitLen() > 256 {
-		bigint, ok = nil, false
-	}
-	return bigint, ok
-}
-
-// MustParseBig256 parses s as a 256 bit big integer and panics if the string is invalid.
-func MustParseBig256(s string) *big.Int {
-	v, ok := ParseBig256(s)
-	if !ok {
-		panic("invalid 256 bit integer: " + s)
-	}
-	return v
-}
-
 func TestCompressPubkey(t *testing.T) {
 	key := &ecdsa.PublicKey{
 		Curve: S256(),
-		X:     MustParseBig256("0xe32df42865e97135acfb65f3bae71bdc86f4d49150ad6a440b6f15878109880a"),
-		Y:     MustParseBig256("0x0a2b2667f7e725ceea70c673093bf67663e0312623c8e091b13cf2c0f11ef652"),
+		X:     core.MustParseBig256("0xe32df42865e97135acfb65f3bae71bdc86f4d49150ad6a440b6f15878109880a"),
+		Y:     core.MustParseBig256("0x0a2b2667f7e725ceea70c673093bf67663e0312623c8e091b13cf2c0f11ef652"),
 	}
 	compressed := CompressPubkey(key)
 	if !bytes.Equal(compressed, testpubkeyc) {
