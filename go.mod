@@ -1,11 +1,11 @@
 module github.com/openrelayxyz/plugeth-utils
 
-go 1.19
+go 1.21
 
 require (
 	github.com/btcsuite/btcd/btcec/v2 v2.2.0
 	github.com/consensys/gnark-crypto v0.12.1
-	github.com/crate-crypto/go-kzg-4844 v0.7.0
+	github.com/crate-crypto/go-kzg-4844 v1.0.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/ethereum/c-kzg-4844/bindings/go v0.0.0-20230126171313-363c7d7593b4
 	github.com/google/gofuzz v1.2.0
