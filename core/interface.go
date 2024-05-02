@@ -52,7 +52,6 @@ type Backend interface {
 	BloomStatus() (uint64, uint64)
 	GetLogs(ctx context.Context, blockHash Hash) ([][]byte, error) // []RLP encoded logs
 	SubscribeLogsEvent(ch chan<- [][]byte) Subscription            // []RLP encoded logs
-	SubscribePendingLogsEvent(ch chan<- [][]byte) Subscription     // RLP Encoded logs
 	SubscribeRemovedLogsEvent(ch chan<- []byte) Subscription       // RLP encoded logs
 
 	GetTrie(hash Hash) (Trie, error)
