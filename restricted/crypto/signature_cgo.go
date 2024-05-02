@@ -24,8 +24,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/openrelayxyz/plugeth-utils/core"
 	"github.com/openrelayxyz/plugeth-utils/restricted/crypto/secp256k1"
+	"github.com/openrelayxyz/plugeth-utils/restricted/math"
 )
 
 // Ecrecover returns the uncompressed public key that created the given signature.
@@ -54,7 +54,7 @@ func Sign(digestHash []byte, prv *ecdsa.PrivateKey) (sig []byte, err error) {
 	if len(digestHash) != DigestLength {
 		return nil, fmt.Errorf("hash is required to be exactly %d bytes (%d)", DigestLength, len(digestHash))
 	}
-	seckey := core.PaddedBigBytes(prv.D, prv.Params().BitSize/8)
+	seckey := math.PaddedBigBytes(prv.D, prv.Params().BitSize/8)
 	defer zeroBytes(seckey)
 	return secp256k1.Sign(digestHash, seckey)
 }
