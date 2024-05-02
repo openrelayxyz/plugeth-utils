@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strings"
+	"math/big"
 )
 
 type Hash [32]byte
@@ -74,6 +75,18 @@ func BytesToAddress(b []byte) Address {
 	copy(h[20-len(b):], b)
 	return h
 }
+
+// Cmp compares two addresses.
+func (a Address) Cmp(other Address) int {
+	return bytes.Compare(a[:], other[:])
+}
+
+// Bytes gets the string representation of the underlying address.
+func (a Address) Bytes() []byte { return a[:] }
+
+// Big converts an address to a big integer.
+func (a Address) Big() *big.Int { return new(big.Int).SetBytes(a[:]) }
+
 
 type ChainEvent struct {
 	Block []byte // RLP Encoded block
