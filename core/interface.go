@@ -28,6 +28,7 @@ type Backend interface {
 	CurrentBlock() []byte                                            // RLP encoded block
 	BlockByNumber(ctx context.Context, number int64) ([]byte, error) // RLP encoded block
 	BlockByHash(ctx context.Context, hash Hash) ([]byte, error)      // RLP encoded block
+	InsertBlock(data []byte) error // RLP encoded block
 	// BlockByNumberOrHash(ctx context.Context, blockNrOrHash rpc.BlockNumberOrHash) (*types.Block, error)
 	// StateAndHeaderByNumber(ctx context.Context, number rpc.BlockNumber) (*state.StateDB, *types.Header, error)
 	// StateAndHeaderByNumberOrHash(ctx context.Context, blockNrOrHash rpc.BlockNumberOrHash) (*state.StateDB, *types.Header, error)
