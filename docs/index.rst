@@ -1,55 +1,30 @@
-=======
-PluGeth
-=======
+========
+Xplugeth
+========
 
+Xplugeth is an evolution of `Plugeth <https://github.com/openrelayxyz/plugeth>`_, designed to simplify the process of building customized Geth binaries with integrated modifications, including extended functionality (plugins) and core-level changes (patches).
 
+PluGeth introduced a modular way to extend Geth, but keeping up with upstream changes (Geth, Core-Geth, Matic-Bor) while maintaining compatibility across multiple repositories led to code drift and increased maintenance complexity. Xplugeth addresses this by integrating necessary modifications directly into the codebase, eliminating the need for separate utility repositories and reducing the overhead of maintaining forks like Plugeth-Bor and Plugeth-ETC, ensuring a more streamlined and consistent build process.
 
-**The Geth fork to end all Forks.**
+Patches
+-------
 
-PluGeth is a fork of the Go Ethereum Client, `Geth`_, implementing the Golang plugin architecture allowing developers to adapt and extend Geth's capabilities using plugins rather than having to create additional new forks. 
+Xplugeth applies patches to modify Geth’s behavior at the source level before compilation. These patches enable **custom functionality** by modifying Geth’s core internals, **adding hooks** for external plugins, and making **network-specific changes** for chains like Polygon and ETC. By using patches, Xplugeth eliminates the need for maintaining multiple forks, ensuring that all modifications are handled dynamically within a unified codebase.
 
-The PluGeth project aims to provide a secure and versitile tool for anyone who needs to run a Geth (or Geth-derived) node client that supports features beyond those offered by Geth’s vanilla EVM. 
+Plugins
+-------
 
-All dependencies and updates are handled by the PluGeth project, and so, PluGeth enables developers to focus on their projects without having to maintian upstream code.  
+Plugins work alongside patches to extend Geth’s capabilities. During the build process, Xplugeth integrates plugins into the binary, allowing them to interact with the patched functionality. This modular approach enables developers to add **custom APIs, transaction handling, or state modifications** without permanently altering Geth’s core code.
 
+- :ref:`build`
 
-- :ref:`project`
-- :ref:`install`
-- :ref:`build`     
-- :ref:`custom`
 
 .. toctree::
     :maxdepth: 1
     :caption: Overview
     :hidden:
-
-    project
-    types
     
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Tutorials
-    :hidden:
-
-    install
     build
-    custom
-    
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Reference
-    :hidden:
-
-    existing
-    system_req
-    version
-    api
-    plugin_loader
-    hooks
-    hook_writing
-    core_restricted
 
 .. toctree::
     :maxdepth: 1
@@ -57,12 +32,3 @@ All dependencies and updates are handled by the PluGeth project, and so, PluGeth
     :hidden:
 
     contact
-
-
-
-
-
-
-
-
-.. _Geth: https://geth.ethereum.org/

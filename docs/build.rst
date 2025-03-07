@@ -1,79 +1,107 @@
 .. _build:
 
 ================
-Build and Deploy
+Using Xplugeth
 ================
 
 .. contents:: :local:
+   :depth: 1
 
-Setting up the environment
-**************************
+Setting Up 
+==========
+Before using the build tool to generate binaries, ensure your system has the required dependencies:
 
-.. NOTE:: PluGeth is built on a fork of `Geth`_ and as such requires familiarity with `Go`_ and a funtional `environment`_ in which to build Go projects. Thankfully for everyone Go provides a compact and useful `tutorial`_ as well as a `space for practice`_. 
+- Python 3.12.3 or later
+- Go 1.22 or later
+- Git
 
-PluGeth is an application built in three seperate repositories. 
-
-* `PluGeth`_
-* `PluGeth-Utils`_
-* `PluGeth-Plugins`_
-
-For the purposes here you will only need to clone PluGeth and PluGeth-Plugins. Once you have them cloned you are ready to begin. First we need to build PluGeth though the PluGeth project. Navigate to ``plugeth/cmd/geth`` and run:
+To install dependencies, run:
 
 .. code-block:: shell
 
-   $ go get
+   pip install -r build/requirements.txt
 
-This will download all dependencies needed for the project. This process will take a moment or two the first time through. Next run: 
+Using the Build Tool
+====================
 
-.. code-block:: shell
-
-   $ go build
- 
-
-At this point you are ready to start downloading local ethereum nodes. In order to do so, from ``plugeth/cmd/geth`` run:
+To build a binary, run:
 
 .. code-block:: shell
 
-   $ ./geth
+   python3 build/build.py --workdir /tmp/build_xplugeth
 
+This will:
 
-Build your first plugin
-***********************
+- Clone the Geth repository 
+- Checkout Geth version (if specified)
+- Apply patches  
+- Integrate plugins (if specified)  
+- Compile the final binary  
 
-For the sake of this tutorial we will be building the Hello plugin. Navigate to ``plugethPlugins/packages/hello``. Inside you will see a ``main.go`` file. From this location run:
+By default, the output binary is stored in ``/tmp/output/``. 
 
-.. code-block:: shell
-
-   $ go build -buildmode=plugin
-
-This will compile the plugin and produce a ``hello.so`` file. Move ``hello.so`` into ``~/.ethereum/plugins`` . In order to use this plugin geth will need to be started with a ``http.api=mynamespace`` flag. Additionally you will need to include a ``--http`` flag in order to access the standard json rpc methods. 
-
-.. note:: The above location may change when changing ``--datadir``.
-
-Once geth has started you should see that the first ``INFO`` log reads: ``initialized hello`` . A new json rpc method, called hello, has been been appended to the list of available json rpc methods. In order to access this method you will need to ``curl`` into the network with this command:
+The build tool provides several options for customization. If you run with the ``--help`` flag, it shows you all the available arguments that can be passed in with flags
 
 .. code-block:: shell
 
-   $ curl 127.0.0.1:8545 -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"mynamespace_hello","params":[],"id":0}'
+   python3 build/build.py --help
 
-You should see that the network has responded with:
+Flags
+-----
+
+- ``--source-remote``, ``-s``  
+  This flag specifies the Git repository to clone for the build.  
+  **Default:** https://github.com/ethereum/go-ethereum
+
+- ``--source-tag``, ``-t``  
+  Specifies the version or tag of Geth to build.  
+  **Default:** ``v1.14.13``
+
+- ``--plugin``, ``-p``  
+  Adds one or more plugins to the build, provided as import paths.  
+  **Example:**  
+
+  .. code-block:: shell
+
+     --plugin github.com/openrelayxyz/xplugeth/plugins/merge@v0.12.0 \
+     --plugin github.com/openrelayxyz/xplugeth/plugins/producer@v0.12.0
+
+- ``--replace``, ``-r``  
+  Replaces a package dependency with a local path.  
+
+- ``--cmd``, ``-c``  
+  Specifies the command directory where the build process starts. Default: ``./cmd/geth``
+
+- ``--workdir``, ``-w``  
+  Defines the working directory for cloning and patching.  
+
+- ``--artifacts-directory``, ``-a``  
+  Sets the output directory for the compiled binary.  
+  **Default:** ``/tmp/output/``.
+
+- ``--archive``, ``-v``  
+  Specifies a Git archive repository where the built binary can be pushed. If no value is provided, it defaults to  
+  ``git@github.com:openrelayxyz/xplugeth-archive.git``.  
+  **Note:** The archive URL must be an SSH URL to preserve the user's Git credentials.  
+  **Example:**  
+  
+  .. code-block:: shell
+
+     --archive git@github.com:example/xplugeth-archive.git
+
+
+
+Example: Building a Binary with Plugins
+=======================================
+To build a binary with multiple plugins, a specific Geth version, and custom directories, run:
 
 .. code-block:: shell
 
-   ``{"jsonrpc":"2.0","id":0,"result":"Hello world"}``
-
-You have just built and run your first Plugeth plugin. From here you can follow the steps above to build any of the plugins you choose. 
-
-.. NOTE:: Each plugin will vary in terms of the requirements to deploy. Refer to the documentation of the plugin itself in order to assure 
-          that you know how to use it. 
-
-
-
-.. _space for practice: https://tour.golang.org/welcome/1 
-.. _tutorial: https://tour.golang.org/welcome/1 
-.. _environment: https://golang.org/doc/code
-.. _Go: https://golang.org/doc/
-.. _Geth: https://geth.ethereum.org/
-.. _PluGeth: https://github.com/openrelayxyz/plugeth
-.. _PluGeth-Utils: https://github.com/openrelayxyz/plugeth-utils
-.. _PluGeth-Plugins: https://github.com/openrelayxyz/plugeth-plugins
+   python3 build/build.py 
+      -s https://github.com/ethereum/go-ethereum/ \
+      -t v1.14.13 \
+      -p github.com/openrelayxyz/xplugeth/plugins/merge@v0.12.0 \
+      -p github.com/openrelayxyz/xplugeth/plugins/producer@v0.12.0 \
+      -c ./cmd/cli \
+      -w /desktop/build-dir \
+      -a /desktop/output-dir
