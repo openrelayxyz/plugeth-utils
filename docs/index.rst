@@ -17,6 +17,7 @@ Plugins
 Plugins work alongside patches to extend Geth’s capabilities. During the build process, Xplugeth integrates plugins into the binary, allowing them to interact with the patched functionality. This modular approach enables developers to add **custom APIs, transaction handling, or state modifications** without permanently altering Geth’s core code.
 
 - :ref:`build`
+- :ref:`test`
 
 
 .. toctree::
@@ -25,6 +26,7 @@ Plugins work alongside patches to extend Geth’s capabilities. During the build
     :hidden:
     
     build
+    test
 
 .. toctree::
     :maxdepth: 1

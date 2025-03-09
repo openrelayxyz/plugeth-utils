@@ -67,7 +67,11 @@ Flags
      --plugin github.com/openrelayxyz/xplugeth/plugins/producer@v0.12.0
 
 - ``--replace``, ``-r``  
-  Replaces a package dependency with a local path.  
+  Replaces a package dependency with a local version.
+
+  .. code-block:: shell
+
+      --replace github.com/example/module=../local/module
 
 - ``--cmd``, ``-c``  
   Specifies the command directory where the build process starts. Default: ``./cmd/geth``
@@ -84,24 +88,35 @@ Flags
   ``git@github.com:openrelayxyz/xplugeth-archive.git``.  
   **Note:** The archive URL must be an SSH URL to preserve the user's Git credentials.  
   **Example:**  
-  
+
   .. code-block:: shell
 
      --archive git@github.com:example/xplugeth-archive.git
 
 
 
-Example: Building a Binary with Plugins
-=======================================
-To build a binary with multiple plugins, a specific Geth version, and custom directories, run:
+.. _example-building-a-binary:
 
-.. code-block:: shell
+Example: Building a Binary
+==========================
 
-   python3 build/build.py 
-      -s https://github.com/ethereum/go-ethereum/ \
-      -t v1.14.13 \
-      -p github.com/openrelayxyz/xplugeth/plugins/merge@v0.12.0 \
-      -p github.com/openrelayxyz/xplugeth/plugins/producer@v0.12.0 \
-      -c ./cmd/cli \
-      -w /desktop/build-dir \
-      -a /desktop/output-dir
+- To build a binary with multiple plugins, a specific Geth version, and custom directories, run the code below. Please replace ``/workdir`` and ``artifactsdir`` with actual paths where the code and binary should live.
+
+   .. code-block:: shell
+
+        python3 build/build.py \
+            -s https://github.com/ethereum/go-ethereum/ \
+            -t v1.14.13 \
+            -p github.com/openrelayxyz/xplugeth/plugins/merge@v0.12.0 \
+            -p github.com/openrelayxyz/xplugeth/plugins/producer@v0.12.0 \
+            -c ./cmd/cli \
+            -w /workdir \
+            -a /artifactsdir
+
+
+
+- To build a vanilla geth binary without any plugin, you can simply run the file without passing any arguments as it assumes the defaults.  
+   
+   .. code-block:: shell
+
+      python3 build/build.py 

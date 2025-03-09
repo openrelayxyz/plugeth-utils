@@ -17,12 +17,12 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Plugeth'
+project = 'Xplugeth'
 copyright = '2025, Austin Roberts, Philip Morlier, Jesse Akoh'
 author = 'Philip Morlier, Austin Roberts, Jesse Akoh'
 
 # The full version, including alpha/beta/rc tags
-release = 'Austin Roberts'
+release = 'v1'
 
 
 # -- General configuration ---------------------------------------------------
